@@ -1,3 +1,4 @@
+@using System.Collections
 @inject IJSRuntime jsRuntime
 
 
@@ -8,7 +9,7 @@
 
 @code {
     
-    [Parameter] public Action<string, bool> Execute { get; set; }
+    [Parameter] public Action<string, bool>? Execute { get; set; }
     
     [Parameter] public Action<string>? Cache { get; set; }
 
@@ -16,12 +17,25 @@
     
     [Parameter] public bool Ronly { get; set; }
     
+    [Parameter] public Action<string>? FindHistory { get; set; }
+    
+    
+
+    // [Parameter] public int pos { get; set; }
+    
 
     private void RunCommand(KeyboardEventArgs e) {
-        if (e.Code == "Enter" || e.Code == "NumpadEnter") {
-            Execute.Invoke(Command!, Ronly);
+        if (e.Code.Equals("ArrowUp") || e.Code.Equals("ArrowDown")) {
+            FindHistory?.Invoke(e.Code);
         }
+        if (e.Code == "Enter" || e.Code == "NumpadEnter") {
+            Execute?.Invoke(Command!, Ronly);
+        }
+        
+
     }
+    
+    
     
 
     public void RefreshValue(ChangeEventArgs e) {

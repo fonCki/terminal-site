@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using Term2.Services
+@using System.Collections
 @inject Commands Commands
 @inject IJSRuntime jsRuntime
 
@@ -9,55 +10,80 @@
 
 <main class="main" onclick="@Focus">
     <div class="app">
-        @* <p style="color: bisque">@click</p> *@
         @if (HistoryCommands is not null) {
             @foreach (string command in HistoryCommands!) {
-                <Terminal Execute="@Execute" Command=@command Ronly="@true" Cache="@Cache"/>
-                <Response Resp="This is a response"/>
+                <Terminal Execute="@Execute" Command=@command Ronly="@true" Cache="@Cache" FindHistory="@FindHistory"/> //delete many parameters
+                <Response Resp=@(_commands._commandList.FirstOrDefault(c=> c.Name.Equals(command)) ?? new Command(command))/>
             }
         }
-        <Terminal Execute="@Execute" Command=@promptCache Ronly="@false" Cache="@Cache"/>
+        <Terminal Execute="@Execute" Command=@promptCache Ronly="@false" Cache="@Cache" FindHistory="@FindHistory"/>
     </div>
 </main>
 
 @code {
+    private Commands _commands = new Commands();
+    
+    private List<string>? HistoryCommands { get; set; } = new List<string>();
+    private ArrayList HistoryExecuted { get; set; } = new ArrayList();
+    
 
-    private bool click = false;
-
-    private List<string>? HistoryCommands { get; set; }
-
-    protected override void OnInitialized() {
-        HistoryCommands = new List<string>();
-    }
-
-    string id = "a";
-    private bool executed = false;
     string promptCache = "";
+
+    int history = 0;
 
 
 
     private void Execute(string command, bool ronly) {
+        command = command.ToLower();
         promptCache = "";
         HistoryCommands?.Add(command);
+        HistoryExecuted.Add(command);
+        history = HistoryExecuted.Count;
         if (!ronly) {
-            Commands.Execute(command);
+            Command? _command = _commands._commandList.Find(c => c.Name.Equals(command));
+            Run(_command);
         }
-        Console.WriteLine(HistoryCommands.Count);
-       // Commands.Execute(command);
-        Console.WriteLine($"Command not found: @{command}. Try 'help' to get started.");
-        executed = true;
         StateHasChanged();
     }
+    
 
-    private void Focus() {
-        // click = !click;
-        // string lastCommand = HistoryCommands?.Last()!;
-          jsRuntime.InvokeVoidAsync("focusInput", ("command"+promptCache));
+    // When I click in any part of the screen, always focus the last Input
+    private void Focus() { 
+        jsRuntime.InvokeVoidAsync("focusInput", ("command"+promptCache));
     }
 
     private void Cache(string cache) {
         promptCache = cache;
     }
     
-
+    private void FindHistory(string arrow) {
+           Console.WriteLine(history);
+        
+           if (arrow.Equals("ArrowUp")) {
+                history = history - 1;
+            }
+            if (arrow.Equals("ArrowDown")) {
+                history = history + 1;
+            }
+            if (history > HistoryExecuted.Count -1) {
+                history = 0;
+            }
+            if (history < 0) {
+                history = HistoryExecuted.Count -1;
+            }
+            promptCache = (string) HistoryExecuted[history];
+            StateHasChanged();
+    }
+    
+    
+    private void Run(Command? command) {
+        if (command != null) {
+            if (!command.Link.Equals("")) {
+                jsRuntime.InvokeAsync<object>("open", command.Link, "_blank");
+            }
+            if (command.Name.Equals("clear")) {
+                HistoryCommands?.Clear();
+            }
+        }
+    }
 }

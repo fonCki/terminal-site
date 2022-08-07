@@ -1,8 +1,13 @@
+@using Term2.Services
 <main class="main">
-    <p>@Resp</p>
+    @if (Resp != null) {
+        <p>@Resp?.Response</p>
+    }
 </main>
 
 @code {
+
     [Parameter]
-    public string? Resp { get; set; } = "";
+    public Command? Resp { get; set; }
+
 }
