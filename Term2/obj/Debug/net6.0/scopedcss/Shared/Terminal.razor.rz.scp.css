@@ -1,0 +1,27 @@
+.main[b-uyz75hxoma] {
+    margin: 2px;
+    padding: 2px;
+    color: #ebdcb2;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+p[b-uyz75hxoma] {
+    padding: 0;
+    margin: 0;
+}
+
+.input[b-uyz75hxoma] {
+    width: 90%;
+    background-color: yellow;
+    all: unset;
+    border: none;
+    margin-left: 8px;
+    /*background-color: transparent;*/
+    color: #ebdcb2;
+}
+
+input:focus[b-uyz75hxoma] {
+    outline: none;
+}

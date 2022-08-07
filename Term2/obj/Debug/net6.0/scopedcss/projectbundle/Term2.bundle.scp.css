@@ -1,0 +1,130 @@
+/* _content/Term2/Pages/Index.razor.rz.scp.css */
+.main[b-eiwg7q3ipz] {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.app[b-eiwg7q3ipz] {
+    margin-top: 10px;
+    border: #d79922 2px solid;
+    width: 99%;
+    height: 95vh;
+}
+
+@font-face {
+    font-family: Hermit;
+    src: url(./fonts/Hermit-Regular.otf);
+}
+
+*[b-eiwg7q3ipz] {
+    font-family: Hermit, Courier, monospace;
+} 
+/* _content/Term2/Shared/MainLayout.razor.rz.scp.css */
+.page[b-v135a4itqq] {
+    width: 100%;
+    height: 100%;
+}
+
+
+/* _content/Term2/Shared/NavMenu.razor.rz.scp.css */
+.navbar-toggler[b-4jfkpg1ant] {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.top-row[b-4jfkpg1ant] {
+    height: 3.5rem;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.navbar-brand[b-4jfkpg1ant] {
+    font-size: 1.1rem;
+}
+
+.oi[b-4jfkpg1ant] {
+    width: 2rem;
+    font-size: 1.1rem;
+    vertical-align: text-top;
+    top: -2px;
+}
+
+.nav-item[b-4jfkpg1ant] {
+    font-size: 0.9rem;
+    padding-bottom: 0.5rem;
+}
+
+    .nav-item:first-of-type[b-4jfkpg1ant] {
+        padding-top: 1rem;
+    }
+
+    .nav-item:last-of-type[b-4jfkpg1ant] {
+        padding-bottom: 1rem;
+    }
+
+    .nav-item[b-4jfkpg1ant]  a {
+        color: #d7d7d7;
+        border-radius: 4px;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        line-height: 3rem;
+    }
+
+.nav-item[b-4jfkpg1ant]  a.active {
+    background-color: rgba(255,255,255,0.25);
+    color: white;
+}
+
+.nav-item[b-4jfkpg1ant]  a:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+}
+
+@media (min-width: 641px) {
+    .navbar-toggler[b-4jfkpg1ant] {
+        display: none;
+    }
+
+    .collapse[b-4jfkpg1ant] {
+        /* Never collapse the sidebar for wide screens */
+        display: block;
+    }
+}
+/* _content/Term2/Shared/Response.razor.rz.scp.css */
+.main[b-8hjvwxa3ie] {
+    margin: 2px;
+    padding: 2px;
+    color: #ebdcb2;
+}
+/* _content/Term2/Shared/Terminal.razor.rz.scp.css */
+.main[b-uyz75hxoma] {
+    margin: 2px;
+    padding: 2px;
+    color: #ebdcb2;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+p[b-uyz75hxoma] {
+    padding: 0;
+    margin: 0;
+}
+
+.input[b-uyz75hxoma] {
+    width: 90%;
+    background-color: yellow;
+    all: unset;
+    border: none;
+    margin-left: 8px;
+    /*background-color: transparent;*/
+    color: #ebdcb2;
+}
+
+input:focus[b-uyz75hxoma] {
+    outline: none;
+}

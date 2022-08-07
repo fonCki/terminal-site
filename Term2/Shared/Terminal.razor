@@ -1,0 +1,31 @@
+@inject IJSRuntime jsRuntime
+
+
+<main class="main">
+    <p><span style="color: #d79922;">guest@1</span><span style="color: #98971a;">alfonso.ridao.ar:</span> <span style="color: #a99985">$~ </span></p>
+    <input class="input" id=@("command" + @Command) disabled="@Ronly" onkeydown="@RunCommand" value="@Command" @oninput="@RefreshValue"/>
+</main>
+
+@code {
+    
+    [Parameter] public Action<string, bool> Execute { get; set; }
+    
+    [Parameter] public Action<string>? Cache { get; set; }
+
+    [Parameter] public string? Command { get; set; }
+    
+    [Parameter] public bool Ronly { get; set; }
+    
+
+    private void RunCommand(KeyboardEventArgs e) {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter") {
+            Execute.Invoke(Command!, Ronly);
+        }
+    }
+    
+
+    public void RefreshValue(ChangeEventArgs e) {
+        Command = e.Value?.ToString();
+        Cache.Invoke(Command!);
+    }
+}

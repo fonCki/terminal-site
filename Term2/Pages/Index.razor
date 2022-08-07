@@ -1,0 +1,63 @@
+﻿@page "/"
+@using Term2.Services
+@inject Commands Commands
+@inject IJSRuntime jsRuntime
+
+
+
+<PageTitle>alfonso.ridao</PageTitle>
+
+<main class="main" onclick="@Focus">
+    <div class="app">
+        @* <p style="color: bisque">@click</p> *@
+        @if (HistoryCommands is not null) {
+            @foreach (string command in HistoryCommands!) {
+                <Terminal Execute="@Execute" Command=@command Ronly="@true" Cache="@Cache"/>
+                <Response Resp="This is a response"/>
+            }
+        }
+        <Terminal Execute="@Execute" Command=@promptCache Ronly="@false" Cache="@Cache"/>
+    </div>
+</main>
+
+@code {
+
+    private bool click = false;
+
+    private List<string>? HistoryCommands { get; set; }
+
+    protected override void OnInitialized() {
+        HistoryCommands = new List<string>();
+    }
+
+    string id = "a";
+    private bool executed = false;
+    string promptCache = "";
+
+
+
+    private void Execute(string command, bool ronly) {
+        promptCache = "";
+        HistoryCommands?.Add(command);
+        if (!ronly) {
+            Commands.Execute(command);
+        }
+        Console.WriteLine(HistoryCommands.Count);
+       // Commands.Execute(command);
+        Console.WriteLine($"Command not found: @{command}. Try 'help' to get started.");
+        executed = true;
+        StateHasChanged();
+    }
+
+    private void Focus() {
+        // click = !click;
+        // string lastCommand = HistoryCommands?.Last()!;
+          jsRuntime.InvokeVoidAsync("focusInput", ("command"+promptCache));
+    }
+
+    private void Cache(string cache) {
+        promptCache = cache;
+    }
+    
+
+}
