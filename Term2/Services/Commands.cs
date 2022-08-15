@@ -6,59 +6,50 @@ namespace Term2.Services;
 
 
 public class Commands {
+    
+    //SET THE COMMANDS
+    private string[] commandArray = new[] {"","about", "banner", "clear", "date", "email", "github", "help", "instagram", "linkedin"};
+    
+    
     public readonly List<Command?> _commandList = new List<Command?>();
 
     public Commands() {
+
+        //CREATE A LIST OF COMMANDS WITH ALL THE COMMANDS IN THE ARRAY
+        foreach (var comm in commandArray) {
+            _commandList.Add(new Command(comm, $"Opening {comm}...", ""));
+        }
         
-        Command? about = new Command("about",
-            "the response about About",
-            "");
-        
-        Command? banner = new Command("banner",
-            "the response about banner",
-            "");
-        
-        Command? clear = new Command("clear",
-            "the response about clear",
-            "");
-        
-        Command? date = new Command("date",
-            "the response about date",
-            "");
-        
-        Command? email = new Command("email",
-            "the response about email",
-            "mailto:alfonso@ridao.ar");
-        
-        Command? github = new Command("github",
-            "the response about github",
-            "https://github.com/fonCki");
-        
-        Command? help = new Command("help",
-            "the response about help",
-            "");
-        
-        Command? instagram = new Command("instagram",
-            "the response about instagram",
-            "https://www.instagram.com/alfonsoridao/");
-        
-        Command? linkedin = new Command("linkedin",
-            "the response about linkedin",
-            "https://www.linkedin.com/in/alfonsoridao");
-        
-        Command? empty = new Command("",
-            "",
-            "");
-        
-        _commandList.Add(about);
-        _commandList.Add(banner);
-        _commandList.Add(clear);
-        _commandList.Add(date);
-        _commandList.Add(email);
-        _commandList.Add(github);
-        _commandList.Add(help);
-        _commandList.Add(instagram);
-        _commandList.Add(linkedin);
-        _commandList.Add(empty);
+        //SET RESPONSES DIFFERENTS THAN OPPENING
+        _commandList.Find(c => c.Name.Equals("help")).Response = HelpResponse();
+        _commandList.Find(c => c.Name.Equals("about")).Response = AboutResponse();
+        _commandList.Find(c => c.Name.Equals("")).Response = "";
+        // _commandList.Find(c => c.Name.Equals(string.IsNullOrWhiteSpace)).Response = "";
+
+        //SET THE COMMANDS WITH RESPECTIVE LINKS
+        _commandList.Find(c => c.Name.Equals("email")).Link = "mailto:alfonso@ridao.ar";
+        _commandList.Find(c => c.Name.Equals("github")).Link = "https://github.com/fonCki";
+        _commandList.Find(c => c.Name.Equals("instagram")).Link = "https://www.instagram.com/alfonsoridao/";
+        _commandList.Find(c => c.Name.Equals("linkedin")).Link = "https://www.linkedin.com/in/alfonsoridao";
+
     }
+
+    private string HelpResponse() {
+        string available = "";
+        foreach (var command in commandArray) {
+            if (!string.IsNullOrEmpty(command)) {
+                available += command + ", ";
+            }
+        }
+        available = available.Remove(available.Length - 2);
+        return (@"<p> Available Commands:  <br>  " +
+                 "<p>" + available + "<p> <br>"  +
+                "[tab]  complete command <br>" +
+                "[esc]  cancel command </p>");
+    }
+
+    private string AboutResponse() {
+        return (@"<p>This is an <b>about</b> response</p>");
+    }
+    
 }

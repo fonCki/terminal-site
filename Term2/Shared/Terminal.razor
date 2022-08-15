@@ -3,8 +3,8 @@
 
 
 <main class="main">
-    <p><span style="color: #d79922;">guest@1</span><span style="color: #98971a;">alfonso.ridao.ar:</span> <span style="color: #a99985">$~ </span></p>
-    <input class="input" id=@("command" + @Command) disabled="@Ronly" onkeydown="@RunCommand" value="@Command" @oninput="@RefreshValue"/>
+    <p><span style="color: #d79922;">guest@1</span><span style="color: #98971a;">alfonso.ridao.ar:</span><span style="color: #a99985">$~ </span></p>
+    <input autocomplete="false" class="input" ID=@ID disabled="@Ronly" onkeydown="@RunCommand" value="@Command" @oninput="@RefreshValue"/>
 </main>
 
 @code {
@@ -12,34 +12,35 @@
     [Parameter] public Action<string, bool>? Execute { get; set; }
     
     [Parameter] public Action<string>? Cache { get; set; }
-
+    
+    [Parameter] public Action<string>? FindHistory { get; set; }
+    
     [Parameter] public string? Command { get; set; }
     
     [Parameter] public bool Ronly { get; set; }
     
-    [Parameter] public Action<string>? FindHistory { get; set; }
+    [Parameter] public string? ID { get; set; }
     
-    
-
-    // [Parameter] public int pos { get; set; }
     
 
     private void RunCommand(KeyboardEventArgs e) {
+        Console.WriteLine(e.Code);
         if (e.Code.Equals("ArrowUp") || e.Code.Equals("ArrowDown")) {
             FindHistory?.Invoke(e.Code);
         }
         if (e.Code == "Enter" || e.Code == "NumpadEnter") {
             Execute?.Invoke(Command!, Ronly);
         }
+        if (e.Code == "Escape") {
+            Cache?.Invoke("");
+        }
         
-
     }
-    
     
     
 
     public void RefreshValue(ChangeEventArgs e) {
         Command = e.Value?.ToString();
-        Cache.Invoke(Command!);
+        Cache?.Invoke(Command!);
     }
 }

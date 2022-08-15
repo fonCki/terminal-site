@@ -27,6 +27,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRmV0Y2hEYXRhLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Shared/Photo.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL1Bob3RvLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Shared/SurveyPrompt.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL1N1cnZleVByb21wdC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 

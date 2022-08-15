@@ -1,7 +1,6 @@
 .main[b-uyz75hxoma] {
     margin: 2px;
     padding: 2px;
-    color: #ebdcb2;
     display: flex;
     justify-content: start;
     align-items: center;
@@ -13,12 +12,11 @@ p[b-uyz75hxoma] {
 }
 
 .input[b-uyz75hxoma] {
-    width: 90%;
-    background-color: yellow;
-    all: unset;
+    flex-shrink: 5;
+    width: 70%;
     border: none;
     margin-left: 8px;
-    /*background-color: transparent;*/
+    background-color: transparent;
     color: #ebdcb2;
 }
 

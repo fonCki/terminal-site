@@ -1,13 +1,18 @@
 @using Term2.Services
 <main class="main">
     @if (Resp != null) {
-        <p>@Resp?.Response</p>
+        if (Resp!.Name.Equals("about")) {
+            <Photo />
+        }
+        else {
+            <p>@ms</p>
+        }
     }
 </main>
 
 @code {
 
     [Parameter]
-    public Command? Resp { get; set; }
-
+    public Command Resp { get; set; }
+     MarkupString ms => (MarkupString)Resp!.Response;
 }

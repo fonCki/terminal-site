@@ -12,14 +12,22 @@
     margin-top: 10px;
     border: #d79922 2px solid;
     width: 99%;
-    height: 95vh;
+    min-height: 95vh;
 }
 
+
+
 @font-face {
-    font-family: Hermit;
-    src: url(./fonts/Hermit-Regular.otf);
+    font-family: Hack;
+    src: url(./fonts/Hack/Hack-Regular.ttf);
+    
 }
 
 *[b-eiwg7q3ipz] {
-    font-family: Hermit, Courier, monospace;
+    font-size: 15px;
+    font-family: Hack, Hermit, Courier, monospace;
 } 
+
+.photo[b-eiwg7q3ipz] {
+
+}
