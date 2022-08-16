@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "gzHWSGyrrBPnZ8Gr41pxzdX1SoF7JnXUsPKBtcDq15g=",
+  "Hash": "HW4BHaYET3BDnyEAngjWHZJJ3LAj7O3XxQYbYALyUCI=",
   "Source": "Term2",
   "BasePath": "_content/Term2",
   "Mode": "Default",
@@ -83,6 +83,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/ascii-art.html"
+    },
+    {
+      "Identity": "/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/wwwroot/banner.html",
+      "SourceId": "Term2",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/wwwroot/",
+      "BasePath": "_content/Term2",
+      "RelativePath": "banner.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/banner.html"
     },
     {
       "Identity": "/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/wwwroot/Binary.html",

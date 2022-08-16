@@ -1,11 +1,10 @@
 @using Term2.Services
 <main class="main">
-    @if (Resp != null) {
-        if (Resp!.Name.Equals("about")) {
-            <Photo />
-        }
-        else {
-            <p>@ms</p>
+    @if (Resp is not null) {
+        switch (Resp!.Name) {
+            case "about" :  <Photo/>; <p>@ms</p>; break;
+            case "banner":  <Bannerrrrr/>; <p>@ms</p> break;
+            default: <p>@ms</p> break;
         }
     }
 </main>
@@ -14,5 +13,5 @@
 
     [Parameter]
     public Command Resp { get; set; }
-     MarkupString ms => (MarkupString)Resp!.Response;
+    MarkupString ms => (MarkupString)Resp!.Response;
 }

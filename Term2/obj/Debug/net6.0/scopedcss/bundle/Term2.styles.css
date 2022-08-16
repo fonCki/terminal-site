@@ -32,6 +32,14 @@
 .photo[b-eiwg7q3ipz] {
 
 }
+/* _content/Term2/Shared/Bannerrrrr.razor.rz.scp.css */
+
+
+@media only screen and (max-width: 600px) {
+    main[b-76o79l2nzy] {
+        font-size: 5px;
+    }
+}
 /* _content/Term2/Shared/MainLayout.razor.rz.scp.css */
 .page[b-v135a4itqq] {
     width: 100%;

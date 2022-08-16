@@ -1,20 +1,19 @@
 ﻿@page "/"
 @using Term2.Services
 @using System.Collections
-@inject Commands Commands
+@using Term2.Model
+
+@inject Commands _commands
 @inject IJSRuntime jsRuntime
-
-
+@inject IApiClientService _apiClientService;
 
 <PageTitle>alfonso.ridao</PageTitle>
-
-
 
 <main class="main" onclick="@Focus">
     <div class="app">
         @if (HistoryCommands is not null) {
             @foreach (string command in HistoryCommands!) {
-                <Terminal Command=@command Ronly="@true"/>
+                <Terminal Command=@command Ronly="@true" Ip="@IpAddress"/>
                 <Response Resp=@(_commands._commandList.FirstOrDefault(c => c.Name.Equals(command)) ?? new Command(command))/>
             }
         }
@@ -24,21 +23,29 @@
             Ronly="@false"
             Cache="@Cache"
             FindHistory="@FindHistory"
-            ID=@("command" + @promptCache + @history)/>
+            ID=@("command" + @promptCache + @history)
+            Ip="@IpAddress"/>
     </div>
 </main>
 
 @code {
-    private Commands _commands = new Commands();
     
     private List<string>? HistoryCommands { get; set; } = new List<string>();
     private ArrayList HistoryExecuted { get; set; } = new ArrayList();
+    
 
-
+    string IpAddress = "#unknown-user";
+    
+    
     string commandColor = "#ebdcb2";
     string promptCache = "";
 
     int history = 0;
+
+     protected async override Task OnInitializedAsync() {
+         HistoryCommands.Add("banner");
+    // IpAddress = _apiClientService.GetUserIPAsync().Result.IP;
+     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender) {
         await jsRuntime.InvokeVoidAsync("OnScrollEvent");
@@ -54,7 +61,6 @@
             Command? _command = _commands._commandList.Find(c => c.Name.Equals(command));
             Run(_command);
         }
-        
         StateHasChanged();
     }
     
@@ -67,7 +73,7 @@
 
     private void Cache(string cache) {
         promptCache = cache;
-        commandColor = (_commands._commandList.FirstOrDefault(c=> c.Name.Equals(promptCache))?.Name == null) ? "#ebdcb2" : "#9E1A1A";
+        // commandColor = (_commands._commandList.FirstOrDefault(c=> c.Name.Equals(promptCache))?.Name == null) ? "#ebdcb2" : "#9E1A1A";
         StateHasChanged();
     }
     
@@ -106,6 +112,5 @@
             }
         }
     }
-    
     
 }

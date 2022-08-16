@@ -1,13 +1,20 @@
 @using System.Collections
+@using Term2.Model
+@using Term2.Services
 @inject IJSRuntime jsRuntime
+@inject IApiClientService _apiClientService;
 
 
 <main class="main">
-    <p><span style="color: #d79922;">guest@1</span><span style="color: #98971a;">alfonso.ridao.ar:</span><span style="color: #a99985">$~ </span></p>
+    <p>
+        <span style="color: #d79922;">@Ip</span><span style="color: #89AEB2;">@@</span><span style="color: #98971a;">alfonso.ridao.ar:</span><span style="color: #a99985">$~ </span>
+    </p>
     <input autocomplete="false" class="input" ID=@ID disabled="@Ronly" onkeydown="@RunCommand" value="@Command" @oninput="@RefreshValue"/>
 </main>
 
 @code {
+
+    [Parameter] public string Ip { get; set; } = "#unknown-user";
     
     [Parameter] public Action<string, bool>? Execute { get; set; }
     
@@ -23,6 +30,7 @@
     
     
 
+
     private void RunCommand(KeyboardEventArgs e) {
         Console.WriteLine(e.Code);
         if (e.Code.Equals("ArrowUp") || e.Code.Equals("ArrowDown")) {
@@ -36,8 +44,6 @@
         }
         
     }
-    
-    
 
     public void RefreshValue(ChangeEventArgs e) {
         Command = e.Value?.ToString();
