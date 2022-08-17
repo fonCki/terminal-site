@@ -29,3 +29,6 @@
 /Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/obj/Debug/net6.0/Term2.pdb
 /Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/obj/Debug/net6.0/Term2.genruntimeconfig.cache
 /Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/obj/Debug/net6.0/scopedcss/Shared/Bannerrrrr.razor.rz.scp.css
+/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/obj/Debug/net6.0/scopedcss/Shared/Photo.razor.rz.scp.css
+/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/bin/Debug/net6.0/Newtonsoft.Json.dll
+/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/obj/Debug/net6.0/Term2.csproj.CopyComplete

@@ -1,7 +1,27 @@
-
+.main {
+    overflow: hidden;
+}
 
 @media only screen and (max-width: 600px) {
     main {
-        font-size: 5px;
+        font-size: 4px;
+    }
+}
+
+@media only screen and (min-width: 600px) {
+    main {
+        font-size: 8px;
+    }
+}
+
+@media only screen and (min-width: 1024px) {
+    main {
+        font-size: 12px;
+    }
+}
+
+@media only screen and (min-width: 1400px) {
+    main {
+        font-size: 15px;
     }
 }

@@ -5,7 +5,7 @@
 
 @inject Commands _commands
 @inject IJSRuntime jsRuntime
-@inject IApiClientService _apiClientService;
+@inject IApiClientService ApiClientService;
 
 <PageTitle>alfonso.ridao</PageTitle>
 
@@ -44,7 +44,8 @@
 
      protected async override Task OnInitializedAsync() {
          HistoryCommands.Add("banner");
-    // IpAddress = _apiClientService.GetUserIPAsync().Result.IP;
+          IpAddress = await ApiClientService.GetUserIPAsync();
+
      }
 
     protected async override Task OnAfterRenderAsync(bool firstRender) {

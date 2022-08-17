@@ -2,8 +2,10 @@
 <main class="main">
     @if (Resp is not null) {
         switch (Resp!.Name) {
-            case "about" :  <Photo/>; <p>@ms</p>; break;
-            case "banner":  <Bannerrrrr/>; <p>@ms</p> break;
+            case "about" :  <Photo/><p>@ms</p>; break;
+            case "banner":  <Bannerrrrr/><p>@ms</p> break;
+            case "date":  <p>@ms</p><Date/> break;
+            case "whoami":  <WhoAmI /> break;
             default: <p>@ms</p> break;
         }
     }

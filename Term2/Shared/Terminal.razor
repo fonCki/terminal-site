@@ -6,7 +6,7 @@
 
 
 <main class="main">
-    <p>
+    <p class="name">
         <span style="color: #d79922;">@Ip</span><span style="color: #89AEB2;">@@</span><span style="color: #98971a;">alfonso.ridao.ar:</span><span style="color: #a99985">$~ </span>
     </p>
     <input autocomplete="false" class="input" ID=@ID disabled="@Ronly" onkeydown="@RunCommand" value="@Command" @oninput="@RefreshValue"/>
@@ -41,6 +41,9 @@
         }
         if (e.Code == "Escape") {
             Cache?.Invoke("");
+        }
+        if (e.Code == "Tab") {
+            jsRuntime.InvokeVoidAsync("invokeTabKey");
         }
         
     }

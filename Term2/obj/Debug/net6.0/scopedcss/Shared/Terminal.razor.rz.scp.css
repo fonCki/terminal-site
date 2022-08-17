@@ -6,9 +6,10 @@
     align-items: center;
 }
 
-p[b-uyz75hxoma] {
+.name[b-uyz75hxoma] {
     padding: 0;
     margin: 0;
+    min-width: fit-content;
 }
 
 .input[b-uyz75hxoma] {

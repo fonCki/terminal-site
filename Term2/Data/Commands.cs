@@ -27,9 +27,10 @@ public class Commands {
         
         //SET RESPONSES DIFFERENTS THAN OPPENING
         _commandList.Find(c => c.Name.Equals("help")).Response = HelpResponse();
+        _commandList.Find(c => c.Name.Equals("date")).Response = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss");
         _commandList.Find(c => c.Name.Equals("about")).Response = AboutResponse();
         _commandList.Find(c => c.Name.Equals("")).Response = "";
-        _commandList.Find(c => c.Name.Equals("whoami")).Response = WhoAmIResponse().Result;
+        _commandList.Find(c => c.Name.Equals("whoami")).Response = "";
         _commandList.Find(c => c.Name.Equals("banner")).Response = BannerResponse();
 
 
@@ -44,19 +45,13 @@ public class Commands {
     }
 
     private string BannerResponse() {
-        return (@"<p> Type 'help' to see a list of available commands." +
-                "<p>-<p> <br>" +
-                "This project is my own version of term. based on <b>@m4tt72</b>'s version. <br><br>" +
-                "type 'repo' to find out the repository. <br>" +
-                "made with Blazor <br><br> ");
+        return (@"<p>Type 'help' to see a list of available commands.</p>" +
+                "<p>-<p>" +
+                "<p># This project is my own version of term. based on <i>@m4tt72</i>'s version. </p>" +
+                "<p># Type 'repo' to find out the repository. </p>" +
+                "<p># Made with Blazor </p> ");
     }
-
-    private async Task<string> WhoAmIResponse() {
-          //  IPAddress ipAddress = await ApiClientService.GetUserIPAsync();
-          // UserGeolocation location = await ApiClientService.GetLocationAsync(ipAddress.IP);
-          // return (ipAddress + location.city + location.time_zone);
-         return ("Hola");
-    }
+    
 
     private string HelpResponse() {
         string available = "";
@@ -73,7 +68,7 @@ public class Commands {
     }
 
     private string AboutResponse() {
-        return (@"<p>This is an <b>about</b> response</p>");
+        return (@"<p><b>Alfonso Ridao™</b> Software Developer</p>");
     }
     
 }

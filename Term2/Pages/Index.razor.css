@@ -31,3 +31,10 @@
 .photo {
 
 }
+
+@media only screen and (max-width: 500px) {
+    * {
+        font-size: 12px;
+    }
+}
+

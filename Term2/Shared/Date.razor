@@ -1,0 +1,25 @@
+@using Term2.Model
+@using System.Text.Json
+@using Newtonsoft.Json.Linq
+@using Term2.Services
+@inject IJSRuntime jsRuntime
+@inject IApiClientService ApiClientService
+
+@if (Event is not null) {
+    <p>Did you know that a day like today, in @Event.Year, @Event.Description</p>
+}
+
+@code {
+
+    private Event Event { get; set; }
+    
+    protected async override Task OnInitializedAsync() {
+        List<Event> List = await ApiClientService.GetDateEventsAsync();
+        Event = List[new Random().Next(0, List.Count)];
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender) {
+        await jsRuntime.InvokeVoidAsync("OnScrollEvent");
+    }
+
+}

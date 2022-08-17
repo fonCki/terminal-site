@@ -31,3 +31,10 @@
 .photo[b-eiwg7q3ipz] {
 
 }
+
+@media only screen and (max-width: 500px) {
+    *[b-eiwg7q3ipz] {
+        font-size: 12px;
+    }
+}
+
