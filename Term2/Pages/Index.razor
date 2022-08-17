@@ -23,6 +23,7 @@
             Ronly="@false"
             Cache="@Cache"
             FindHistory="@FindHistory"
+            TabSearch="@TabSearc"
             ID=@("command" + @promptCache + @history)
             Ip="@IpAddress"/>
     </div>
@@ -113,5 +114,12 @@
             }
         }
     }
-    
+
+    private void TabSearc(string command) {
+        Console.WriteLine(command);
+        promptCache = (_commands._commandList.FirstOrDefault(c => c.Name.Contains(command))?.Name ?? command);
+        Console.WriteLine(promptCache);
+        StateHasChanged();
+    }
+
 }

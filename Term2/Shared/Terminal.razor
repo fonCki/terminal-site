@@ -13,14 +13,16 @@
 </main>
 
 @code {
-
-    [Parameter] public string Ip { get; set; } = "#unknown-user";
     
     [Parameter] public Action<string, bool>? Execute { get; set; }
     
     [Parameter] public Action<string>? Cache { get; set; }
     
     [Parameter] public Action<string>? FindHistory { get; set; }
+    
+    [Parameter] public Action<string>? TabSearch { get; set; }
+    
+    [Parameter] public string Ip { get; set; }
     
     [Parameter] public string? Command { get; set; }
     
@@ -43,7 +45,7 @@
             Cache?.Invoke("");
         }
         if (e.Code == "Tab") {
-            jsRuntime.InvokeVoidAsync("invokeTabKey");
+            TabSearch?.Invoke(Command!);
         }
         
     }
