@@ -23,10 +23,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL0RhdGUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Shared/SurveyPrompt.razor]
-build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL1N1cnZleVByb21wdC5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = 
-
 [/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Shared/WhoAmI.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL1dob0FtSS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
@@ -39,17 +35,13 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvSW5kZXgucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-eiwg7q3ipz
 
-[/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Shared/Bannerrrrr.razor]
-build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL0Jhbm5lcnJycnIucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = b-76o79l2nzy
+[/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Shared/Banner.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL0Jhbm5lci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-rk9nxxek5e
 
 [/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Shared/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL01haW5MYXlvdXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-v135a4itqq
-
-[/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Shared/NavMenu.razor]
-build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL05hdk1lbnUucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = b-4jfkpg1ant
 
 [/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Shared/Photo.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL1Bob3RvLnJhem9y

@@ -39,31 +39,31 @@
     }
 }
 
-/* _content/Term2/Shared/Bannerrrrr.razor.rz.scp.css */
-.main[b-76o79l2nzy] {
+/* _content/Term2/Shared/Banner.razor.rz.scp.css */
+.main[b-rk9nxxek5e] {
     overflow: hidden;
 }
 
 @media only screen and (max-width: 600px) {
-    main[b-76o79l2nzy] {
+    main[b-rk9nxxek5e] {
         font-size: 4px;
     }
 }
 
 @media only screen and (min-width: 600px) {
-    main[b-76o79l2nzy] {
+    main[b-rk9nxxek5e] {
         font-size: 8px;
     }
 }
 
 @media only screen and (min-width: 1024px) {
-    main[b-76o79l2nzy] {
+    main[b-rk9nxxek5e] {
         font-size: 12px;
     }
 }
 
 @media only screen and (min-width: 1400px) {
-    main[b-76o79l2nzy] {
+    main[b-rk9nxxek5e] {
         font-size: 15px;
     }
 }
@@ -74,69 +74,6 @@
 }
 
 
-/* _content/Term2/Shared/NavMenu.razor.rz.scp.css */
-.navbar-toggler[b-4jfkpg1ant] {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.top-row[b-4jfkpg1ant] {
-    height: 3.5rem;
-    background-color: rgba(0,0,0,0.4);
-}
-
-.navbar-brand[b-4jfkpg1ant] {
-    font-size: 1.1rem;
-}
-
-.oi[b-4jfkpg1ant] {
-    width: 2rem;
-    font-size: 1.1rem;
-    vertical-align: text-top;
-    top: -2px;
-}
-
-.nav-item[b-4jfkpg1ant] {
-    font-size: 0.9rem;
-    padding-bottom: 0.5rem;
-}
-
-    .nav-item:first-of-type[b-4jfkpg1ant] {
-        padding-top: 1rem;
-    }
-
-    .nav-item:last-of-type[b-4jfkpg1ant] {
-        padding-bottom: 1rem;
-    }
-
-    .nav-item[b-4jfkpg1ant]  a {
-        color: #d7d7d7;
-        border-radius: 4px;
-        height: 3rem;
-        display: flex;
-        align-items: center;
-        line-height: 3rem;
-    }
-
-.nav-item[b-4jfkpg1ant]  a.active {
-    background-color: rgba(255,255,255,0.25);
-    color: white;
-}
-
-.nav-item[b-4jfkpg1ant]  a:hover {
-    background-color: rgba(255,255,255,0.1);
-    color: white;
-}
-
-@media (min-width: 641px) {
-    .navbar-toggler[b-4jfkpg1ant] {
-        display: none;
-    }
-
-    .collapse[b-4jfkpg1ant] {
-        /* Never collapse the sidebar for wide screens */
-        display: block;
-    }
-}
 /* _content/Term2/Shared/Photo.razor.rz.scp.css */
 
 

@@ -1,7 +1,7 @@
 ﻿@page "/"
 @using Term2.Services
 @using System.Collections
-@using Term2.Model
+
 
 @inject Commands _commands
 @inject IJSRuntime jsRuntime
@@ -23,9 +23,10 @@
             Ronly="@false"
             Cache="@Cache"
             FindHistory="@FindHistory"
-            TabSearch="@TabSearc"
+            TabSearch="@TabSearch"
             ID=@("command" + @promptCache + @history)
-            Ip="@IpAddress"/>
+            Ip="@IpAddress"
+        />
     </div>
 </main>
 
@@ -36,16 +37,12 @@
     
 
     string IpAddress = "#unknown-user";
-    
-    
-    string commandColor = "#ebdcb2";
     string promptCache = "";
-
     int history = 0;
 
      protected async override Task OnInitializedAsync() {
-         HistoryCommands.Add("banner");
-          IpAddress = await ApiClientService.GetUserIPAsync();
+         HistoryCommands!.Add("banner");
+         IpAddress = await ApiClientService.GetUserIPAsync();
 
      }
 
@@ -70,12 +67,10 @@
     // When I click in any part of the screen, always focus the last Input
     private void Focus() {
         jsRuntime.InvokeVoidAsync("focusInput", ("command"+promptCache+history));
-        // StateHasChanged();
     }
 
     private void Cache(string cache) {
         promptCache = cache;
-        // commandColor = (_commands._commandList.FirstOrDefault(c=> c.Name.Equals(promptCache))?.Name == null) ? "#ebdcb2" : "#9E1A1A";
         StateHasChanged();
     }
     
@@ -101,24 +96,20 @@
         }
     }
     
-    
-    
     private void Run(Command? command) {
-        if (command != null) {
-            if (!command.Link.Equals("")) {
-             //   Openinging(command);
-                jsRuntime.InvokeAsync<object>("open", command.Link, "_blank");
-            }
+        if (command == null) return;
+        if (!command.Link.Equals("")) {
+            jsRuntime.InvokeAsync<object>("open", command.Link, "_blank");
+        }
+        else {
             if (command.Name.Equals("clear")) {
                 HistoryCommands?.Clear();
             }
         }
     }
 
-    private void TabSearc(string command) {
-        Console.WriteLine(command);
+    private void TabSearch(string command) {
         promptCache = (_commands._commandList.FirstOrDefault(c => c.Name.Contains(command))?.Name ?? command);
-        Console.WriteLine(promptCache);
         StateHasChanged();
     }
 

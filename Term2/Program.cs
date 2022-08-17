@@ -12,15 +12,6 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<Commands>();
 builder.Services.AddScoped<IApiClientService,ApiClientService>();
 
-builder.Services.AddHttpClient("IP",(options) => {
-    options.BaseAddress = new Uri("https://jsonip.com");
-});
-
-
-builder.Services.AddHttpClient("Location", options => {
-    options.BaseAddress = new Uri("http://api.ipstack.com");
-});
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

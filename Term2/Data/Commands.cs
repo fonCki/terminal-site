@@ -1,8 +1,3 @@
-using System.Runtime.CompilerServices;
-using System.Text;
-using Term2.Model;
-using static Term2.Services.Command;
-
 
 namespace Term2.Services; 
 

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "HW4BHaYET3BDnyEAngjWHZJJ3LAj7O3XxQYbYALyUCI=",
+  "Hash": "RH8Ue7tE2VUEibHcQEREi0UIFucitVMde6Ympjr9mUw=",
   "Source": "Term2",
   "BasePath": "_content/Term2",
   "Mode": "Default",
@@ -83,40 +83,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/ascii-art.html"
-    },
-    {
-      "Identity": "/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/wwwroot/banner.html",
-      "SourceId": "Term2",
-      "SourceType": "Discovered",
-      "ContentRoot": "/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/wwwroot/",
-      "BasePath": "_content/Term2",
-      "RelativePath": "banner.html",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot/banner.html"
-    },
-    {
-      "Identity": "/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/wwwroot/Binary.html",
-      "SourceId": "Term2",
-      "SourceType": "Discovered",
-      "ContentRoot": "/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/wwwroot/",
-      "BasePath": "_content/Term2",
-      "RelativePath": "Binary.html",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot/Binary.html"
     },
     {
       "Identity": "/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/wwwroot/css/bootstrap/bootstrap.min.css",
@@ -661,23 +627,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/fonts/Hermit-RegularItalic.otf"
-    },
-    {
-      "Identity": "/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/wwwroot/Screen_Shot_2022-08-12_at_4.39.26_PM (2).html",
-      "SourceId": "Term2",
-      "SourceType": "Discovered",
-      "ContentRoot": "/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/wwwroot/",
-      "BasePath": "_content/Term2",
-      "RelativePath": "Screen_Shot_2022-08-12_at_4.39.26_PM (2).html",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot/Screen_Shot_2022-08-12_at_4.39.26_PM (2).html"
     },
     {
       "Identity": "/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/wwwroot/script/script.js",
