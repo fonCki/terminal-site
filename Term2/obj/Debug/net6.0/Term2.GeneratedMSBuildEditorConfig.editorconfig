@@ -1,0 +1,59 @@
+is_global = true
+build_property.TargetFramework = net6.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = false
+build_property.PlatformNeutralAssembly = 
+build_property._SupportedPlatformList = browser
+build_property.EnableSingleFileAnalyzer = 
+build_property.EnableTrimAnalyzer = true
+build_property.IncludeAllContentForSelfExtract = 
+build_property.RootNamespace = Term2
+build_property.RootNamespace = Term2
+build_property.ProjectDir = /Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = /Users/alfonsoridao/Projects/RiderProjects/Term2/Term2
+build_property._RazorSourceGeneratorDebug = 
+
+[/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Pages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Shared/Banner.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL0Jhbm5lci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Shared/Date.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL0RhdGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Shared/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL01haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Shared/Photo.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL1Bob3RvLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Shared/Response.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL1Jlc3BvbnNlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Shared/Terminal.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL1Rlcm1pbmFsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Shared/WhoAmI.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL1dob0FtSS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 

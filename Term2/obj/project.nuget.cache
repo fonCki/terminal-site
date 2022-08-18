@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "HCNXUsonxUREJIizfSNWfbd/6I0uYq1PEuxlzuVMD7r02v7BGuWpqxBk1TwkwgJHqetY4dQofXuT8iwdpk6EQA==",
+  "dgSpecHash": "6XJf6uZV7F60XAmuxRKqfHLMhALQty66wway/AKdhjrfYtM1NVQCsFCm0FwRxQdEiEPFsmwHM72mrM6j/U84gQ==",
   "success": true,
-  "projectFilePath": "/Users/alfonsoridao/Projects/Term2/Term2/Term2.csproj",
+  "projectFilePath": "/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Term2.csproj",
   "expectedPackageFiles": [
     "/Users/alfonsoridao/.nuget/packages/microsoft.aspnetcore.authorization/6.0.1/microsoft.aspnetcore.authorization.6.0.1.nupkg.sha512",
     "/Users/alfonsoridao/.nuget/packages/microsoft.aspnetcore.components/6.0.1/microsoft.aspnetcore.components.6.0.1.nupkg.sha512",
