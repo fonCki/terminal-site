@@ -1,5 +1,5 @@
 # CLI
-[A personal website,](https://github.com/user/repo/blob/branch/other_file.md)
+[A personal website,](https://alfonso.ridao.ar)
 linking to all my social profiles.
 
 
