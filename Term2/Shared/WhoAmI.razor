@@ -13,8 +13,7 @@ else {
     public string Country { get; set; }
     
     protected async override Task OnInitializedAsync() {
-        string Ip = await ApiClientService.GetUserIPAsync();
-        Country = await ApiClientService.GetLocationAsync(Ip);
+        Country = await ApiClientService.GetLocationAsync();
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender) {

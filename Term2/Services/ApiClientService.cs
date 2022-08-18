@@ -16,15 +16,15 @@ public class ApiClientService : IApiClientService{
         return result["ip"].Value<string>();
     }
 
-    public async Task<string> GetLocationAsync(string userIp) {
+    public async Task<string> GetLocationAsync() {
         using HttpClient client = new();
-        HttpResponseMessage response = await client.GetAsync($"http://ip-api.com/json/{userIp}");
+        HttpResponseMessage response = await client.GetAsync($"https://ipapi.co/json/");
         string content = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode) {
             return "Planet Earth";
         }
         JObject result = JObject.Parse(content);
-        return result["country"].Value<string>();
+        return result["country_name"].Value<string>();
     }
     
     public async Task<List<Event>> GetDateEventsAsync() {

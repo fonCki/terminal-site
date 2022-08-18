@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Term2.csproj": {}
+    "/Users/alfonsoridao/Projects/Term2/Term2/Term2.csproj": {}
   },
   "projects": {
-    "/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Term2.csproj": {
+    "/Users/alfonsoridao/Projects/Term2/Term2/Term2.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Term2.csproj",
+        "projectUniqueName": "/Users/alfonsoridao/Projects/Term2/Term2/Term2.csproj",
         "projectName": "Term2",
-        "projectPath": "/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Term2.csproj",
+        "projectPath": "/Users/alfonsoridao/Projects/Term2/Term2/Term2.csproj",
         "packagesPath": "/Users/alfonsoridao/.nuget/packages/",
-        "outputPath": "/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/obj/",
+        "outputPath": "/Users/alfonsoridao/Projects/Term2/Term2/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/alfonsoridao/.nuget/NuGet/NuGet.Config"
@@ -38,6 +38,19 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Components.WebAssembly": {
+              "target": "Package",
+              "version": "[6.0.1, )"
+            },
+            "Microsoft.AspNetCore.Components.WebAssembly.DevServer": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.1, )"
+            },
+            "Microsoft.Extensions.Http": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[13.0.1, )"
@@ -53,15 +66,23 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.NETCore.App.Runtime.Mono.browser-wasm",
+              "version": "[6.0.1, 6.0.1]"
+            }
+          ],
           "frameworkReferences": {
-            "Microsoft.AspNetCore.App": {
-              "privateAssets": "none"
-            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
           "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.101/RuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "browser-wasm": {
+          "#import": []
         }
       }
     }

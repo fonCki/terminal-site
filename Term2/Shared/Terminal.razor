@@ -5,11 +5,11 @@
 @inject IApiClientService _apiClientService;
 
 
-<main class="main">
-    <p class="name">
+<main class="main-terminal">
+    <p class="name-terminal">
         <span style="color: #d79922;">@Ip</span><span style="color: #89AEB2;">@@</span><span style="color: #98971a;">alfonso.ridao.ar:</span><span style="color: #a99985">$~ </span>
     </p>
-    <input autocomplete="false" class="input" ID=@ID disabled="@Ronly" onkeydown="@RunCommand" value="@Command" @oninput="@RefreshValue"/>
+    <input autocomplete="false" class="input-terminal" ID=@ID disabled="@Ronly" onkeydown="@RunCommand" value="@Command" @oninput="@RefreshValue"/>
 </main>
 
 @code {

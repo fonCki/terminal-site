@@ -9,8 +9,8 @@
 
 <PageTitle>alfonso.ridao</PageTitle>
 
-<main class="main" onclick="@Focus">
-    <div class="app">
+<main class="main-index" onclick="@Focus">
+    <div class="app-index">
         @if (HistoryCommands is not null) {
             @foreach (string command in HistoryCommands!) {
                 <Terminal Command=@command Ronly="@true" Ip="@IpAddress"/>

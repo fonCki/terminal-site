@@ -1,30 +1,146 @@
-@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+
+
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    width: 100%;
+    height: 100%;
+    background-color: #282828                                                         ;
+    visibility:hidden;
 }
 
-h1:focus {
+
+@font-face {
+    font-family: Hack-Local;
+    src: url(https://alfonso.ridao.ar/fonts/Hack/Hack-Regular.ttf);
+}
+
+
+* {
+    font-size: 15px;
+    font-family:  Hack, Hack-Local, monospace;
+}
+
+@media only screen and (max-width: 500px) {
+    * {
+        font-size: 12px;
+    }
+}
+
+.main-index {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.app-index {
+    margin-top: 10px;
+    border: #d79922 2px solid;
+    width: 99%;
+    min-height: 95vh;
+}
+
+
+.banner > * {
+    overflow: hidden;
+}
+
+.main-response {
+    margin: 2px;
+    padding: 2px;
+    color: #ebdcb2;
+}
+
+.component-response {
+    display: flex;
+    justify-content: center;
+}
+
+@media only screen and (max-width: 600px) {
+    .banner {
+        font-size: 4px;
+    }
+    .photo, .photo > *{
+        line-height: 0.07em;
+        font-size: 3px;
+    }
+}
+
+@media only screen and (min-width: 600px) {
+    .banner {
+        font-size: 8px;
+    }
+    .photo, .photo > *{
+        line-height: 0.5em;
+        font-size: 5px;
+    }
+}
+
+@media only screen and (min-width: 1024px) {
+    .banner {
+        font-size: 12px;
+    }
+    .photo, .photo > *{
+        line-height: 1em;
+        font-size: 12px;
+    }
+}
+
+@media only screen and (min-width: 1400px) {
+    .banner {
+        font-size: 15px;
+    }
+    .photo, .photo > *{
+        line-height: 1.2em;
+        font-size: 15px;
+    }
+}
+
+
+.photo {
+    font-size: 15px;
+    background-color: transparent;
+    font-weight: bold;
+    padding: 4px 5px;
+    --fs: 16px;
+    position: relative;
+    overflow: hidden;
+}
+
+
+
+
+.main-terminal {
+    margin: 2px;
+    padding: 2px;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+.name-terminal {
+    padding: 0;
+    margin: 0;
+    min-width: fit-content;
+}
+
+.input-terminal {
+    flex-shrink: 5;
+    width: 70%;
+    border: none;
+    margin-left: 8px;
+    background-color: transparent;
+    color: #ebdcb2;
+}
+
+.input-terminal:focus {
     outline: none;
 }
 
-a, .btn-link {
-    color: #0071c1;
-}
-
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-}
-
-.content {
-    padding-top: 1.1rem;
-}
-
-.valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
-}
 
 .invalid {
     outline: 1px solid red;
@@ -62,3 +178,7 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+html,body {
+    visibility: visible; !important;
+}
