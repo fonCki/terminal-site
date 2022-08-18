@@ -11,7 +11,7 @@
 
 @code {
 
-    private Event Event { get; set; }
+    private Event? Event { get; set; }
     
     protected async override Task OnInitializedAsync() {
         List<Event> List = await ApiClientService.GetDateEventsAsync();

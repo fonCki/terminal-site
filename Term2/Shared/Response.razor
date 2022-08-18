@@ -13,6 +13,6 @@
 
 @code {
     [Parameter]
-    public Command Resp { get; set; }
+    public Command? Resp { get; set; }
     MarkupString ms => (MarkupString)Resp!.Response;
 }

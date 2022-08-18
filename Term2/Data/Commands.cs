@@ -5,11 +5,11 @@ namespace Term2.Services;
 public class Commands {
 
     //SET THE COMMANDS
-    private string[] commandArray = new[] {"","about", "banner", "clear", "date", "email", "github", "help", "instagram", "linkedin", "repo","whoami"};
+    private string[]? commandArray = new[] {"","about", "banner", "clear", "date", "email", "github", "help", "instagram", "linkedin", "repo","whoami"};
     
-    public readonly List<Command?> _commandList = new List<Command?>();
+    public readonly List<Command?>? _commandList = new List<Command?>();
 
-    private IApiClientService ApiClientService;
+    private IApiClientService? ApiClientService;
 
     public Commands(IApiClientService apiClientService) {
 
@@ -21,21 +21,21 @@ public class Commands {
         }
         
         //SET RESPONSES DIFFERENTS THAN OPPENING
-        _commandList.Find(c => c.Name.Equals("help")).Response = HelpResponse();
-        _commandList.Find(c => c.Name.Equals("date")).Response = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss");
-        _commandList.Find(c => c.Name.Equals("about")).Response = AboutResponse();
-        _commandList.Find(c => c.Name.Equals("")).Response = "";
-        _commandList.Find(c => c.Name.Equals("whoami")).Response = "";
-        _commandList.Find(c => c.Name.Equals("banner")).Response = BannerResponse();
+        _commandList.Find(c => c!.Name.Equals("help"))!.Response = HelpResponse();
+        _commandList.Find(c => c!.Name.Equals("date"))!.Response = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss");
+        _commandList.Find(c => c!.Name.Equals("about"))!.Response = AboutResponse();
+        _commandList.Find(c => c!.Name.Equals(""))!.Response = "";
+        _commandList.Find(c => c!.Name.Equals("whoami"))!.Response = "";
+        _commandList.Find(c => c!.Name.Equals("banner"))!.Response = BannerResponse();
 
 
         //SET THE COMMANDS WITH RESPECTIVE LINKS
         
-        _commandList.Find(c => c.Name.Equals("email")).Link = "mailto:alfonso@ridao.ar";
-        _commandList.Find(c => c.Name.Equals("github")).Link = "https://github.com/fonCki";
-        _commandList.Find(c => c.Name.Equals("instagram")).Link = "https://www.instagram.com/alfonsoridao/";
-        _commandList.Find(c => c.Name.Equals("linkedin")).Link = "https://www.linkedin.com/in/alfonsoridao";
-        _commandList.Find(c => c.Name.Equals("repo")).Link = "https://github.com/fonCki/Term2";
+        _commandList.Find(c => c!.Name.Equals("email"))!.Link = "mailto:alfonso@ridao.ar";
+        _commandList.Find(c => c!.Name.Equals("github"))!.Link = "https://github.com/fonCki";
+        _commandList.Find(c => c!.Name.Equals("instagram"))!.Link = "https://www.instagram.com/alfonsoridao/";
+        _commandList.Find(c => c!.Name.Equals("linkedin"))!.Link = "https://www.linkedin.com/in/alfonsoridao";
+        _commandList.Find(c => c!.Name.Equals("repo"))!.Link = "https://github.com/fonCki/Term2";
 
     }
 
@@ -51,7 +51,7 @@ public class Commands {
 
     private string HelpResponse() {
         string available = "";
-        foreach (var command in commandArray) {
+        foreach (var command in commandArray!) {
             if (!string.IsNullOrEmpty(command)) {
                 available += command + ", ";
             }

@@ -15,7 +15,7 @@ public class Command {
      
      public Command(string command) {
          Name = "";
-         Response = "";
+         Link = "";
          Response = ($"Command not found: {command}. Try 'help' to get started.");
      }
      

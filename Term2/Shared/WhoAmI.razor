@@ -10,7 +10,7 @@ else {
 }
 @code {
     
-    public string Country { get; set; }
+    public string? Country { get; set; }
     
     protected async override Task OnInitializedAsync() {
         Country = await ApiClientService.GetLocationAsync();

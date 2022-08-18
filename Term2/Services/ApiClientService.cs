@@ -13,7 +13,7 @@ public class ApiClientService : IApiClientService{
             return "#unknown-user";
         }
         JObject result = JObject.Parse(content);
-        return result["ip"].Value<string>();
+        return result["ip"]!.Value<string>()!;
     }
 
     public async Task<string> GetLocationAsync() {
@@ -24,7 +24,7 @@ public class ApiClientService : IApiClientService{
             return "Planet Earth";
         }
         JObject result = JObject.Parse(content);
-        return result["country_name"].Value<string>();
+        return result["country_name"]!.Value<string>()!;
     }
     
     public async Task<List<Event>> GetDateEventsAsync() {
@@ -37,7 +37,7 @@ public class ApiClientService : IApiClientService{
             throw new Exception($"Error: {response.StatusCode}, {content}");
         }
         JObject result = JObject.Parse(content);
-        List<Event> events = result["events"].Value<JArray>().ToObject<List<Event>>();
-        return events;
+        List<Event> events = result["events"]!.Value<JArray>()!.ToObject<List<Event>>()!;
+        return events!;
     }
 }

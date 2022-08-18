@@ -18,7 +18,7 @@
         @if (HistoryCommands is not null) {
             @foreach (string command in HistoryCommands!) {
                 <Terminal Command=@command Ronly="@true" Ip="@IpAddress"/>
-                <Response Resp=@(_commands._commandList.FirstOrDefault(c => c.Name.Equals(command)) ?? new Command(command))/>
+                <Response Resp=@(_commands!._commandList!.FirstOrDefault(c => c!.Name.Equals(command)) ?? new Command(command))/>
             }
         }
         <Terminal
@@ -43,13 +43,13 @@
     string promptCache = "";
     int history = 0;
 
-     protected async override Task OnInitializedAsync() {
+     protected override async Task OnInitializedAsync() {
          HistoryCommands!.Add("banner");
          IpAddress = await ApiClientService.GetUserIPAsync();
 
      }
 
-    protected async override Task OnAfterRenderAsync(bool firstRender) {
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
         await jsRuntime.InvokeVoidAsync("OnScrollEvent");
     }
 
@@ -57,10 +57,10 @@
         command = command.ToLower().Trim();
         promptCache = "";
         HistoryCommands?.Add(command);
-        HistoryExecuted.Add(command);
-        history = HistoryExecuted.Count;
+        HistoryExecuted?.Add(command);
+        history = HistoryExecuted!.Count;
         if (!ronly) {
-            Command? _command = _commands._commandList.Find(c => c.Name.Equals(command));
+            Command? _command = _commands?._commandList?.Find(c => c!.Name.Equals(command));
             Run(_command);
         }
         StateHasChanged();
@@ -94,7 +94,7 @@
             }
         
         if (HistoryExecuted.Count > 0) {
-            promptCache = (string) HistoryExecuted[history];
+            promptCache = (string) HistoryExecuted[history]!;
             StateHasChanged();
         }
     }
@@ -112,7 +112,7 @@
     }
 
     private void TabSearch(string command) {
-        promptCache = (_commands._commandList.FirstOrDefault(c => c.Name.Contains(command))?.Name ?? command);
+        promptCache = (_commands._commandList?.FirstOrDefault(c => c!.Name.Contains(command))?.Name ?? command);
         StateHasChanged();
     }
 
