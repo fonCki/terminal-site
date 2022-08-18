@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using Term2.Services
 @using System.Collections
+@using System.Text.RegularExpressions
 
 
 @inject Commands _commands
@@ -11,6 +12,9 @@
 
 <main class="main-index" onclick="@Focus">
     <div class="app-index">
+        <div class="mobile">
+                <MobileBanner/>
+            </div>
         @if (HistoryCommands is not null) {
             @foreach (string command in HistoryCommands!) {
                 <Terminal Command=@command Ronly="@true" Ip="@IpAddress"/>
@@ -25,8 +29,7 @@
             FindHistory="@FindHistory"
             TabSearch="@TabSearch"
             ID=@("command" + @promptCache + @history)
-            Ip="@IpAddress"
-        />
+            Ip="@IpAddress"/>
     </div>
 </main>
 
@@ -51,7 +54,7 @@
     }
 
     private void Execute(string command, bool ronly) {
-        command = command.ToLower();
+        command = command.ToLower().Trim();
         promptCache = "";
         HistoryCommands?.Add(command);
         HistoryExecuted.Add(command);

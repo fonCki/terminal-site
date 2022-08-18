@@ -9,6 +9,13 @@ html, body {
     visibility:hidden;
 }
 
+.mobile {
+    overflow: hidden;
+    align-items: center;
+    height: 40vh;
+    display: none;
+    color: #ebdcb2;
+}
 
 @font-face {
     font-family: Hack-Local;
@@ -24,6 +31,9 @@ html, body {
 @media only screen and (max-width: 500px) {
     * {
         font-size: 12px;
+    }
+    .mobile {
+     display: flex;
     }
 }
 
@@ -178,7 +188,10 @@ html, body {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+    
 
 html,body {
     visibility: visible; !important;
 }
+
+
