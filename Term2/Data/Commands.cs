@@ -45,7 +45,7 @@ public class Commands {
                 "<p># This project is my own version of term. based on <i>@m4tt72</i>'s version. </p>" +
                 "<p># Type 'repo' to find out the repository. </p>" +
                 "<p># Made with Blazor </p>" +
-                "<p> *This is beta version*</p>");
+                "<p> *This is a beta version*</p>");
     }
     
 
