@@ -70,7 +70,22 @@ html, body {
     justify-content: center;
 }
 
-@media only screen and (max-width: 600px) {
+
+@media only screen and (max-width: 410px) {
+    .banner {
+        font-size: 4px;
+    }
+    .banner-mobile {
+        font-size: 11px;
+    }
+    .photo, .photo > *{
+        line-height: 0.07em;
+        font-size: 3px;
+    }
+}
+
+
+@media only screen and (min-width: 370px) {
     .banner {
         font-size: 4px;
     }
