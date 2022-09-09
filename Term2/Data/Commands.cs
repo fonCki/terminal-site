@@ -5,8 +5,8 @@ namespace Term2.Services;
 public class Commands {
 
     //SET THE COMMANDS
-    private string[]? commandArray = new[] {"","about", "banner", "clear", "date", "email", "github", "help", "instagram", "linkedin", "repo","whoami", "war"};
-    
+    private readonly string[]? commandArray = new[] {"","about", "banner", "clear", "date", "email", "github", "help", "instagram", "linkedin", "repo","whoami"};
+        
     public readonly List<Command?>? _commandList = new List<Command?>();
 
     private IApiClientService? ApiClientService;
