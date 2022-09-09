@@ -5,7 +5,7 @@ namespace Term2.Services;
 public class Commands {
 
     //SET THE COMMANDS
-    private string[]? commandArray = new[] {"","about", "banner", "clear", "date", "email", "github", "help", "instagram", "linkedin", "repo","whoami", "war"};
+    private string[]? commandArray = new[] {"","about", "banner", "clear", "date", "email", "github", "help", "instagram", "linkedin", "repo","whoami"};
     
     public readonly List<Command?>? _commandList = new List<Command?>();
 
@@ -27,7 +27,6 @@ public class Commands {
         _commandList.Find(c => c!.Name.Equals(""))!.Response = "";
         _commandList.Find(c => c!.Name.Equals("whoami"))!.Response = "";
         _commandList.Find(c => c!.Name.Equals("banner"))!.Response = BannerResponse();
-        _commandList.Find(c => c!.Name.Equals("war"))!.Response = WarResponse();
 
 
         //SET THE COMMANDS WITH RESPECTIVE LINKS
@@ -49,8 +48,7 @@ public class Commands {
                 "<p>-<p>" +
                 "<p># This project is my own version of term. based on <i>@m4tt72</i>'s version. </p>" +
                 "<p># Type 'repo' to find out the repository. </p>" +
-                "<p># Made with Blazor </p>" +
-                "<p> *This is a beta version*</p>");
+                "<p># Made with Blazor </p>");
     }
     
 
