@@ -6,7 +6,9 @@ document.addEventListener('keydown', function (e) {
 });
 
 function focusInput(id) {
-    document.getElementById(id).focus();
+    if (id !== null) {
+        document.getElementById(id).focus();
+    }
 }
 
 function OnScrollEvent() {
