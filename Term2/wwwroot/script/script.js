@@ -6,7 +6,7 @@ document.addEventListener('keydown', function (e) {
 });
 
 function focusInput(id) {
-    if (id !== null) {
+    if (document.getElementById(id) !== null) {
         document.getElementById(id).focus();
     }
 }
