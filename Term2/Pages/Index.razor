@@ -51,6 +51,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender) {
         await jsRuntime.InvokeVoidAsync("OnScrollEvent");
+        Focus();
     }
 
     private void Execute(string command, bool ronly) {
