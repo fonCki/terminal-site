@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "6XJf6uZV7F60XAmuxRKqfHLMhALQty66wway/AKdhjrfYtM1NVQCsFCm0FwRxQdEiEPFsmwHM72mrM6j/U84gQ==",
+  "dgSpecHash": "O8GAGRkVPvojpKB3B4hQqlXxCW9WhixDppVh8AGkS+oLqgGp5k1BZtIyCfut7FAYF5ZG8VOiaqBEexXOQGTLgA==",
   "success": true,
   "projectFilePath": "/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/Term2.csproj",
   "expectedPackageFiles": [
@@ -35,7 +35,9 @@
     "/Users/alfonsoridao/.nuget/packages/system.runtime.compilerservices.unsafe/6.0.0/system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
     "/Users/alfonsoridao/.nuget/packages/system.text.encodings.web/6.0.0/system.text.encodings.web.6.0.0.nupkg.sha512",
     "/Users/alfonsoridao/.nuget/packages/system.text.json/6.0.0/system.text.json.6.0.0.nupkg.sha512",
-    "/Users/alfonsoridao/.nuget/packages/microsoft.netcore.app.runtime.mono.browser-wasm/6.0.1/microsoft.netcore.app.runtime.mono.browser-wasm.6.0.1.nupkg.sha512"
+    "/Users/alfonsoridao/.nuget/packages/microsoft.netcore.app.ref/6.0.11/microsoft.netcore.app.ref.6.0.11.nupkg.sha512",
+    "/Users/alfonsoridao/.nuget/packages/microsoft.netcore.app.runtime.mono.browser-wasm/6.0.11/microsoft.netcore.app.runtime.mono.browser-wasm.6.0.11.nupkg.sha512",
+    "/Users/alfonsoridao/.nuget/packages/microsoft.aspnetcore.app.ref/6.0.11/microsoft.aspnetcore.app.ref.6.0.11.nupkg.sha512"
   ],
   "logs": []
 }
