@@ -4,7 +4,6 @@ Welcome to my personal website! Here you can find information about me and my wo
 
 ## Features
 
-- **Banner:** A banner appears when the website is accessed, displaying a welcome message and a list of available commands.
 - **Commands:** The following commands are available:
   - `about`: Shows a photo of myself and some information about me.
   - `banner`: Displays the banner and welcome message.
@@ -15,9 +14,9 @@ Welcome to my personal website! Here you can find information about me and my wo
   - `help`: Lists all available commands.
   - `instagram`: Opens my Instagram profile in a new tab.
   - `linkedin`: Opens my LinkedIn profile in a new tab.
-  - `repo`: Opens a repository on GitHub in a new tab.
+  - `repo`: Opens this repository on GitHub in a new tab.
   - `whoami`: Shows the location of the user based on their IP address.
-- **Social media links:** Links to my various social media profiles are provided in the footer of the website.
+  
 
 ![Screen Shot 2022-08-18 at 4 51 36 PM](https://user-images.githubusercontent.com/61322896/185425987-4231107b-05d1-45bd-9828-0ca16536e862.png)
 
