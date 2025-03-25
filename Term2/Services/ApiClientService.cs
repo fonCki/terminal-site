@@ -6,15 +6,20 @@ namespace Term2.Services;
 public class ApiClientService : IApiClientService{
     
     public async Task<string> GetUserIPAsync() {
+        
         using HttpClient client = new();
-        HttpResponseMessage response = await client.GetAsync($"https://jsonip.com");
+        
+        HttpResponseMessage response = await client.GetAsync("https://api.ipify.org?format=json");
         string content = await response.Content.ReadAsStringAsync();
+    
         if (!response.IsSuccessStatusCode) {
             return "#unknown-user";
         }
+        
         JObject result = JObject.Parse(content);
-        return result["ip"]!.Value<string>()!;
+        return result["ip"]?.Value<string>() ?? "#unknown-user";
     }
+
 
     public async Task<string> GetLocationAsync() {
         using HttpClient client = new();
