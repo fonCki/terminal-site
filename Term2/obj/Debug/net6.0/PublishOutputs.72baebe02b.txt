@@ -1,1 +1,0 @@
-/Users/alfonsoridao/Projects/RiderProjects/Term2/Term2/bin/Debug/net6.0/publish/web.config

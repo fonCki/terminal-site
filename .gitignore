@@ -1,0 +1,19 @@
+# Rider / IntelliJ
+.idea/
+.idea/**
+
+# Visual Studio/VSCode
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+bin/
+obj/
+
+# Other typical .NET ignores
+*.db
+*.db-journal
+*.log

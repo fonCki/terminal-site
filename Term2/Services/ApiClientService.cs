@@ -7,7 +7,7 @@ public class ApiClientService : IApiClientService{
     
     public async Task<string> GetUserIPAsync() {
         using HttpClient client = new();
-        HttpResponseMessage response = await client.GetAsync($"https://jsonip.com");
+        HttpResponseMessage response = await client.GetAsync($"https://api.ipify.org?format=json");
         string content = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode) {
             return "#unknown-user";
