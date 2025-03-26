@@ -1,13 +1,19 @@
-# Default ignored files
-/shelf/
-/workspace.xml
-# Rider ignored files
-/modules.xml
-/contentModel.xml
-/.idea.Term2.iml
-/projectSettingsUpdater.xml
-# Editor-based HTTP Client requests
-/httpRequests/
-# Datasource local storage ignored files
-/dataSources/
-/dataSources.local.xml
+# Rider / IntelliJ
+.idea/
+.idea/**
+
+# Visual Studio/VSCode
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+bin/
+obj/
+
+# Other typical .NET ignores
+*.db
+*.db-journal
+*.log
