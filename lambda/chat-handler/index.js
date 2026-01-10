@@ -112,6 +112,11 @@ exports.handler = async (event) => {
         const userMessage = body.message;
         const history = body.history || [];
 
+        // DEBUG: Log what we receive
+        console.log('CHAT DEBUG - Received history:', JSON.stringify(history));
+        console.log('CHAT DEBUG - History length:', history.length);
+        console.log('CHAT DEBUG - Message:', userMessage);
+
         // Validate input
         if (!userMessage || typeof userMessage !== 'string') {
             return {
@@ -134,11 +139,12 @@ exports.handler = async (event) => {
         const model = await getModel();
 
         // Build conversation history for Gemini (filter out empty messages)
+        // Support both camelCase (content/role) and PascalCase (Content/Role) for compatibility
         const geminiHistory = history
-            .filter(msg => msg.content && msg.content.trim().length > 0)
+            .filter(msg => (msg.content || msg.Content) && (msg.content || msg.Content).trim().length > 0)
             .map(msg => ({
-                role: msg.role === 'assistant' ? 'model' : 'user',
-                parts: [{ text: msg.content }]
+                role: (msg.role || msg.Role) === 'assistant' ? 'model' : 'user',
+                parts: [{ text: msg.content || msg.Content }]
             }));
 
         // Start chat with conversation history

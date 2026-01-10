@@ -75,3 +75,100 @@ Deployed via AWS Amplify. The `amplify.yml` configuration installs .NET 6.0 SDK 
 2. Set the response: `_commandList.Find(c => c!.Name.Equals("yourcommand"))!.Response = "HTML response";`
 3. Optionally set a link: `_commandList.Find(c => c!.Name.Equals("yourcommand"))!.Link = "https://...";`
 4. If the command needs a custom component, add a case in `Shared/Response.razor`'s switch statement
+
+---
+
+## Future Enhancement: Smart Knowledge Retrieval for Digital Twin
+
+**Goal:** Make the digital twin answer detailed questions about CV, education, projects, etc. by giving Gemini tools to search documents stored in S3.
+
+### Architecture
+
+```
+User asks: "Tell me about your bachelor's degree"
+     ↓
+Gemini decides to call: search_background("bachelor", "education")
+     ↓
+Lambda fetches: s3://terminal-site-private/education.txt
+     ↓
+Gemini responds with specific details
+```
+
+### S3 Document Structure
+
+```
+s3://terminal-site-private/
+  ├── persona.txt        (personality, style - already exists)
+  ├── cv.txt             (work experience, skills summary)
+  ├── education.txt      (degrees, courses, certifications)
+  ├── projects.txt       (detailed project descriptions)
+  └── skills.txt         (technical skills, tools, languages)
+```
+
+### Lambda Changes (chat-handler/index.js)
+
+```javascript
+// 1. Define tools for Gemini
+const tools = [{
+  functionDeclarations: [{
+    name: "search_background",
+    description: "Search Alfonso's background info (CV, education, projects, skills)",
+    parameters: {
+      type: "object",
+      properties: {
+        query: { type: "string", description: "What to search for" },
+        category: {
+          type: "string",
+          enum: ["cv", "education", "projects", "skills"],
+          description: "Which document to search"
+        }
+      },
+      required: ["category"]
+    }
+  }]
+}];
+
+// 2. Pass tools to model
+const chat = model.startChat({
+  history: geminiHistory,
+  tools: tools
+});
+
+// 3. Handle function calls in response
+const result = await chat.sendMessage(userMessage);
+const response = result.response;
+
+// Check if Gemini wants to call a function
+const functionCall = response.candidates[0]?.content?.parts?.find(p => p.functionCall);
+if (functionCall) {
+  const { name, args } = functionCall.functionCall;
+
+  // Fetch document from S3
+  const docContent = await getDocument(args.category); // e.g., education.txt
+
+  // Send function result back to Gemini
+  const result2 = await chat.sendMessage([{
+    functionResponse: {
+      name: name,
+      response: { content: docContent }
+    }
+  }]);
+
+  return result2.response.text();
+}
+```
+
+### Implementation Steps
+
+1. Create document files locally with detailed info
+2. Upload documents to S3: `aws s3 cp education.txt s3://terminal-site-private/`
+3. Update Lambda with function calling logic
+4. Test with specific questions
+5. Deploy
+
+### Documents to Prepare
+
+- **cv.txt**: Full work history, responsibilities, achievements
+- **education.txt**: Bachelor details, master's, courses, certifications, grades
+- **projects.txt**: Each project with tech stack, challenges, outcomes
+- **skills.txt**: Programming languages, frameworks, tools, proficiency levels
