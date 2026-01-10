@@ -1,0 +1,23 @@
+@using Term2.Services
+@inject IApiClientService ApiClientService
+@inject IJSRuntime jsRuntime
+
+@if (Country is not null) {
+    <p>You're a very welcome visitor from @Country</p>
+}
+else {
+    <p>Thinking...</p>
+}
+@code {
+    
+    public string? Country { get; set; }
+    
+    protected async override Task OnInitializedAsync() {
+        Country = await ApiClientService.GetLocationAsync();
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender) {
+        await jsRuntime.InvokeVoidAsync("OnScrollEvent");
+    }
+
+}

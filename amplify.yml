@@ -3,17 +3,11 @@ frontend:
   phases:
     preBuild:
       commands:
-        - curl -sSL https://dot.net/v1/dotnet-install.sh > dotnet-install.sh
-        - chmod +x *.sh
-        - ./dotnet-install.sh -c 6.0 -InstallDir ./dotnet6
-        - ./dotnet6/dotnet --version
+        - echo "Using pre-built artifacts from repo"
     build:
       commands:
-        - amplifyPush --simple
-        - ./dotnet6/dotnet publish -c Release -o release
+        - echo "Build complete - using pre-built files"
   artifacts:
-    baseDirectory: /release/wwwroot
+    baseDirectory: release/wwwroot
     files:
       - '**/*'
-  cache:
-    paths: []

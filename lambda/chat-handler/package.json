@@ -1,0 +1,10 @@
+{
+  "name": "terminal-chat-handler",
+  "version": "1.0.0",
+  "description": "Chat handler for Alfonso's terminal digital twin using Gemini Flash",
+  "main": "index.js",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@aws-sdk/client-s3": "^3.0.0"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "terminal-log-handler",
+  "version": "1.0.0",
+  "description": "Analytics logging handler for Alfonso's terminal site",
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.700.0",
+    "@aws-sdk/lib-dynamodb": "^3.700.0"
+  }
+}

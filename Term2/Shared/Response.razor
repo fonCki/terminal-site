@@ -1,0 +1,20 @@
+@using Term2.Services
+<main class="main-response">
+    @if (Resp is not null) {
+        switch (Resp!.Name) {
+            case "about" :  <Photo/><p>@ms</p>; break;
+            case "banner":  <Banner/><p>@ms</p> break;
+            case "chat":    <Chat /><p>@ms</p> break;
+            case "date":  <p>@ms</p><Date/> break;
+            case "whoami":  <WhoAmI /> break;
+            @* case "war": <WarGames/><p>@ms</p> break; *@
+            default: <p>@ms</p> break;
+        }
+    }
+</main>
+
+@code {
+    [Parameter]
+    public Command? Resp { get; set; }
+    MarkupString ms => (MarkupString)Resp!.Response;
+}
