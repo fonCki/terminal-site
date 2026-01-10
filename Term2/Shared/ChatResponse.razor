@@ -1,0 +1,64 @@
+@using Term2.Model
+@using Term2.Services
+@inject IApiClientService ApiClientService
+@inject IJSRuntime jsRuntime
+
+<div class="chat-response">
+    @if (IsLoading) {
+        <p class="typing-indicator" style="color: #a99985; font-style: italic;">writing<span class="dots"></span></p>
+    }
+    else if (!string.IsNullOrEmpty(Response)) {
+        <p><span style="color: #98971a;">alfonso:</span> @Response</p>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string? UserMessage { get; set; }
+
+    [Parameter]
+    public List<ChatMessage>? History { get; set; }
+
+    [Parameter]
+    public string? Ip { get; set; }
+
+    [Parameter]
+    public string? SessionId { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnResponseReceived { get; set; }
+
+    private string? Response { get; set; }
+    private bool IsLoading { get; set; } = true;
+
+    protected override async Task OnInitializedAsync() {
+        if (!string.IsNullOrEmpty(UserMessage)) {
+            try {
+                Response = await ApiClientService.SendChatMessageAsync(UserMessage, History);
+
+                // Log the chat exchange
+                if (!string.IsNullOrEmpty(Ip) && !string.IsNullOrEmpty(SessionId)) {
+                    await ApiClientService.LogChatAsync(Ip, UserMessage, Response ?? "", SessionId);
+                }
+
+                // Notify parent of the response
+                if (OnResponseReceived.HasDelegate) {
+                    await OnResponseReceived.InvokeAsync(Response);
+                }
+            }
+            catch {
+                Response = "Sorry, I couldn't connect. Please try again.";
+            }
+            finally {
+                IsLoading = false;
+            }
+        }
+        else {
+            IsLoading = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        await jsRuntime.InvokeVoidAsync("OnScrollEvent");
+    }
+}
