@@ -30,32 +30,6 @@ function App() {
     setVisitors(null);
   };
 
-  const handleSelectVisitor = async (ip: string) => {
-    if (selectedVisitor === ip) {
-      // Deselect if clicking the same visitor
-      setSelectedVisitor(null);
-      setVisitorActivity(null);
-      return;
-    }
-
-    setSelectedVisitor(ip);
-    setLoadingActivity(true);
-    try {
-      const activity = await api.getVisitorActivity(ip);
-      setVisitorActivity(activity);
-    } catch (err) {
-      console.error('Failed to load visitor activity:', err);
-      setVisitorActivity(null);
-    } finally {
-      setLoadingActivity(false);
-    }
-  };
-
-  // Show login if not authenticated
-  if (!isAuthenticated) {
-    return <Login onLogin={() => setIsAuthenticated(true)} />;
-  }
-
   const fetchData = async () => {
     setLoading(true);
     setError(null);
@@ -80,11 +54,40 @@ function App() {
     }
   };
 
+  const handleSelectVisitor = async (ip: string) => {
+    if (selectedVisitor === ip) {
+      // Deselect if clicking the same visitor
+      setSelectedVisitor(null);
+      setVisitorActivity(null);
+      return;
+    }
+
+    setSelectedVisitor(ip);
+    setLoadingActivity(true);
+    try {
+      const activity = await api.getVisitorActivity(ip);
+      setVisitorActivity(activity);
+    } catch (err) {
+      console.error('Failed to load visitor activity:', err);
+      setVisitorActivity(null);
+    } finally {
+      setLoadingActivity(false);
+    }
+  };
+
+  // useEffect MUST be called before any conditional returns (Rules of Hooks)
   useEffect(() => {
-    fetchData();
-    const interval = setInterval(fetchData, 30000);
-    return () => clearInterval(interval);
-  }, []);
+    if (isAuthenticated) {
+      fetchData();
+      const interval = setInterval(fetchData, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [isAuthenticated]);
+
+  // Show login if not authenticated
+  if (!isAuthenticated) {
+    return <Login onLogin={() => setIsAuthenticated(true)} />;
+  }
 
   const COLORS = ['#98971a', '#458588', '#b16286', '#d79921', '#cc241d', '#689d6a', '#d65d0e', '#83a598'];
 
