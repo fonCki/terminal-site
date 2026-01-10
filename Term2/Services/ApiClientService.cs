@@ -78,8 +78,11 @@ public class ApiClientService : IApiClientService{
             history = history ?? new List<ChatMessage>()
         };
 
+        var jsonPayload = JsonSerializer.Serialize(requestBody);
+        Console.WriteLine($"[CHAT DEBUG] Sending: {jsonPayload}");
+
         var content = new StringContent(
-            JsonSerializer.Serialize(requestBody),
+            jsonPayload,
             Encoding.UTF8,
             "application/json"
         );
