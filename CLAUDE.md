@@ -75,3 +75,9 @@ Deployed via AWS Amplify. The `amplify.yml` configuration installs .NET 6.0 SDK 
 2. Set the response: `_commandList.Find(c => c!.Name.Equals("yourcommand"))!.Response = "HTML response";`
 3. Optionally set a link: `_commandList.Find(c => c!.Name.Equals("yourcommand"))!.Link = "https://...";`
 4. If the command needs a custom component, add a case in `Shared/Response.razor`'s switch statement
+
+---
+
+## Private profile content
+
+Profile content, personal documents, backups and storage configuration are maintained outside this repository. Configure content locations through the backend environment.
