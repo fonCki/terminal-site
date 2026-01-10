@@ -1,0 +1,61 @@
+@using System.Collections
+@using Term2.Model
+@using Term2.Services
+@inject IJSRuntime jsRuntime
+@inject IApiClientService _apiClientService;
+
+
+<main class="main-terminal">
+    <p class="name-terminal">
+        @if (ChatMode) {
+            <span style="color: #98971a;">chat</span><span style="color: #a99985">&gt; </span>
+        } else {
+            <span style="color: #d79922;">@Ip</span><span style="color: #89AEB2;">@@</span><span style="color: #98971a;">alfonso.ridao.ar:</span><span style="color: #a99985">~$ </span>
+        }
+    </p>
+    <input autocomplete="false" class="input-terminal" ID=@ID disabled="@Ronly" onkeydown="@RunCommand" value="@Command" @oninput="@RefreshValue"/>
+</main>
+
+@code {
+    [Parameter] public Action<string, bool>? Execute { get; set; }
+    
+    [Parameter] public Action<string>? Cache { get; set; }
+    
+    [Parameter] public Action<string>? FindHistory { get; set; }
+    
+    [Parameter] public Action<string>? TabSearch { get; set; }
+    
+    [Parameter] public string? Ip { get; set; }
+    
+    [Parameter] public string? Command { get; set; }
+    
+    [Parameter] public bool Ronly { get; set; }
+
+    [Parameter] public string? ID { get; set; }
+
+    [Parameter] public bool ChatMode { get; set; } = false;
+    
+    
+
+
+    private void RunCommand(KeyboardEventArgs e) {
+        if (e.Code.Equals("ArrowUp") || e.Code.Equals("ArrowDown")) {
+            FindHistory?.Invoke(e.Code);
+        }
+        if (e.Code == "Enter" || e.Code == "NumpadEnter") {
+            Execute?.Invoke(Command!, Ronly);
+        }
+        if (e.Code == "Escape") {
+            Cache?.Invoke("");
+        }
+        if (e.Code == "Tab") {
+            TabSearch?.Invoke(Command!);
+        }
+        
+    }
+
+    public void RefreshValue(ChangeEventArgs e) {
+        Command = e.Value?.ToString();
+        Cache?.Invoke(Command!);
+    }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "auth-handler",
+  "version": "1.0.0",
+  "description": "Authentication handler for analytics dashboard",
+  "main": "index.js",
+  "dependencies": {}
+}

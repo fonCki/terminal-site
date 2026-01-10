@@ -1,0 +1,197 @@
+﻿@page "/"
+@using Term2.Services
+@using Term2.Model
+@using System.Collections
+@using System.Text.RegularExpressions
+
+
+@inject Commands _commands
+@inject IJSRuntime jsRuntime
+@inject IApiClientService ApiClientService;
+
+<PageTitle>alfonso.ridao</PageTitle>
+
+<main class="main-index" onclick="@Focus">
+    <div class="app-index">
+        <div class="mobile">
+                <MobileBanner/>
+            </div>
+        @if (HistoryCommands is not null) {
+            @foreach (string item in HistoryCommands!) {
+                @if (item.StartsWith(">>chat>>")) {
+                    @* Chat user message *@
+                    var chatKey = item.Substring(8);
+                    var displayMsg = chatKey.Contains("_") ? chatKey.Substring(0, chatKey.LastIndexOf("_")) : chatKey;
+                    <Terminal Command=@displayMsg Ronly="@true" Ip="@IpAddress" ChatMode="@true"/>
+                    @if (chatResponses.ContainsKey(chatKey)) {
+                        <div class="chat-response">
+                            <p><span style="color: #98971a;">alfonso:</span> @chatResponses[chatKey]</p>
+                        </div>
+                    } else {
+                        <div class="chat-response typing-indicator">
+                            <p style="color: #a99985; font-style: italic;">writing<span class="dots"></span></p>
+                        </div>
+                    }
+                } else {
+                    @* Regular command *@
+                    <Terminal Command=@item Ronly="@true" Ip="@IpAddress"/>
+                    <Response Resp=@(_commands!._commandList!.FirstOrDefault(c => c!.Name.Equals(item)) ?? new Command(item))/>
+                }
+            }
+        }
+        <Terminal
+            Execute="@Execute"
+            Command=@promptCache
+            Ronly="@false"
+            Cache="@Cache"
+            FindHistory="@FindHistory"
+            TabSearch="@TabSearch"
+            ID=@("command" + @promptCache + @history)
+            Ip="@IpAddress"
+            ChatMode="@isChatMode"/>
+    </div>
+</main>
+
+@code {
+
+    private List<string>? HistoryCommands { get; set; } = new List<string>();
+    private ArrayList HistoryExecuted { get; set; } = new ArrayList();
+
+
+    string IpAddress = "#unknown-user";
+    string promptCache = "";
+    int history = 0;
+
+    // Chat mode state
+    bool isChatMode = false;
+    List<ChatMessage> chatHistory = new();
+    Dictionary<string, string> chatResponses = new();
+    string sessionId = Guid.NewGuid().ToString();
+
+    protected override async Task OnInitializedAsync() {
+        HistoryCommands!.Add("banner");
+        IpAddress = await ApiClientService.GetUserIPAsync();
+
+        // Log visit with location (don't block UI)
+        _ = LogVisitWithLocation();
+    }
+
+    private async Task LogVisitWithLocation() {
+        var location = await ApiClientService.GetLocationDetailsAsync();
+        await ApiClientService.LogVisitAsync(IpAddress, location);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        await jsRuntime.InvokeVoidAsync("OnScrollEvent");
+        Focus();
+    }
+
+    private async void Execute(string command, bool ronly) {
+        command = command.ToLower().Trim();
+        promptCache = "";
+
+        // Log the command/message
+        _ = ApiClientService.LogCommandAsync(IpAddress, isChatMode ? $"[chat] {command}" : command);
+
+        // Handle chat mode
+        if (isChatMode) {
+            if (command == "exit") {
+                // Exit chat mode - just show a clean exit message
+                isChatMode = false;
+                chatHistory.Clear();
+                // Don't add anything to history, just exit silently
+                StateHasChanged();
+                return;
+            } else {
+                // Process chat message
+                var chatKey = command + "_" + DateTime.Now.Ticks; // Unique key for duplicate messages
+                HistoryCommands?.Add(">>chat>>" + chatKey);
+                HistoryExecuted?.Add(command);
+                history = HistoryExecuted!.Count;
+                StateHasChanged();
+
+                // Get response from API
+                var response = await ApiClientService.SendChatMessageAsync(command, chatHistory);
+
+                // Store response
+                chatResponses[chatKey] = response;
+
+                // Update chat history for context
+                chatHistory.Add(new ChatMessage { Role = "user", Content = command });
+                chatHistory.Add(new ChatMessage { Role = "assistant", Content = response });
+
+                // Log the chat exchange
+                _ = ApiClientService.LogChatAsync(IpAddress, command, response, sessionId);
+
+                StateHasChanged();
+            }
+            return;
+        }
+
+        // Check if entering chat mode
+        if (command == "chat") {
+            isChatMode = true;
+            chatHistory.Clear();
+            sessionId = Guid.NewGuid().ToString(); // New session for each chat
+        }
+
+        // Normal command flow
+        HistoryCommands?.Add(command);
+        HistoryExecuted?.Add(command);
+        history = HistoryExecuted!.Count;
+        if (!ronly) {
+            Command? _command = _commands?._commandList?.Find(c => c!.Name.Equals(command));
+            Run(_command);
+        }
+        StateHasChanged();
+    }
+    
+
+    // When I click in any part of the screen, always focus the last Input
+    private void Focus() {
+        jsRuntime.InvokeVoidAsync("focusInput", ("command"+promptCache+history));
+    }
+
+    private void Cache(string cache) {
+        promptCache = cache;
+        StateHasChanged();
+    }
+    
+    private void FindHistory(string arrow) {
+        if (arrow.Equals("ArrowUp")) {
+                history = history - 1;
+            }
+            if (arrow.Equals("ArrowDown")) {
+                history = history + 1;
+            }
+            if (history > HistoryExecuted.Count -1) {
+                history = 0;
+            }
+            if (history < 0) {
+                history = (HistoryExecuted.Count - 1 < 0) ? 0 : (HistoryExecuted.Count - 1);
+            }
+        
+        if (HistoryExecuted.Count > 0) {
+            promptCache = (string) HistoryExecuted[history]!;
+            StateHasChanged();
+        }
+    }
+    
+    private void Run(Command? command) {
+        if (command == null) return;
+        if (!command.Link.Equals("")) {
+            jsRuntime.InvokeAsync<object>("open", command.Link, "_blank");
+        }
+        else {
+            if (command.Name.Equals("clear")) {
+                HistoryCommands?.Clear();
+            }
+        }
+    }
+
+    private void TabSearch(string command) {
+        promptCache = (_commands._commandList?.FirstOrDefault(c => c!.Name.Contains(command))?.Name ?? command);
+        StateHasChanged();
+    }
+
+}

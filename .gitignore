@@ -17,3 +17,18 @@ obj/
 *.db
 *.db-journal
 *.log
+
+# Node modules (dashboard)
+node_modules/
+dashboard/node_modules/
+lambda/*/node_modules/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+build/
+*.zip
