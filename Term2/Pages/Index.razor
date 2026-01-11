@@ -180,7 +180,9 @@
     private void Run(Command? command) {
         if (command == null) return;
         if (!command.Link.Equals("")) {
-            jsRuntime.InvokeAsync<object>("open", command.Link, "_blank");
+            // Open win command in same window, others in new tab
+            var target = command.Name.Equals("win") ? "_self" : "_blank";
+            jsRuntime.InvokeAsync<object>("open", command.Link, target);
         }
         else {
             if (command.Name.Equals("clear")) {
