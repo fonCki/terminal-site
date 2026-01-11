@@ -139,7 +139,9 @@ exports.handler = async (event) => {
         const queryParams = event.queryStringParameters || {};
 
         // Route based on path
-        if (path.includes('/win-stats')) {
+        if (path.includes('/win-chats')) {
+            return await getWinChats(queryParams);
+        } else if (path.includes('/win-stats')) {
             return await getWinStats();
         } else if (path.includes('/stats')) {
             return await getStats();
@@ -357,6 +359,61 @@ async function getChats(params) {
 
     const sessions = Object.values(sessionMap)
         .sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+
+    return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+            totalChats: items.length,
+            sessions
+        })
+    };
+}
+
+async function getWinChats(params) {
+    const limit = parseInt(params.limit) || 100;
+
+    const result = await docClient.send(new ScanCommand({
+        TableName: TABLE_NAME,
+        FilterExpression: '#type = :type',
+        ExpressionAttributeNames: { '#type': 'type' },
+        ExpressionAttributeValues: { ':type': 'win-chat' }
+    }));
+
+    const items = (result.Items || [])
+        .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+    // Group by session
+    const sessionMap = {};
+    items.forEach(chat => {
+        const sid = chat.sessionId || 'unknown';
+        if (!sessionMap[sid]) {
+            sessionMap[sid] = {
+                sessionId: sid,
+                ip: chat.ip,
+                startTime: chat.timestamp,
+                messages: []
+            };
+        }
+        sessionMap[sid].messages.push({
+            userMessage: chat.userMessage,
+            botResponse: chat.botResponse,
+            timestamp: chat.timestamp
+        });
+        sessionMap[sid].endTime = chat.timestamp;
+    });
+
+    const sessions = Object.values(sessionMap)
+        .sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+
+    // Get unique IPs and fetch geolocation
+    const uniqueIps = [...new Set(sessions.map(s => s.ip).filter(ip => ip))];
+    const geoLocations = await getGeoLocationsThrottled(uniqueIps);
+
+    // Add location to each session
+    sessions.forEach(session => {
+        session.location = geoLocations[session.ip] || null;
+    });
 
     return {
         statusCode: 200,

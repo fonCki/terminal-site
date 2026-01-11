@@ -109,6 +109,20 @@ export interface ChatsResponse {
   sessions: ChatSession[];
 }
 
+export interface WinChatSession {
+  sessionId: string;
+  ip: string;
+  startTime: string;
+  endTime: string;
+  messages: ChatMessage[];
+  location: GeoLocation | null;
+}
+
+export interface WinChatsResponse {
+  totalChats: number;
+  sessions: WinChatSession[];
+}
+
 export interface Command {
   command: string;
   ip: string;
@@ -209,4 +223,5 @@ export const api = {
   getAll: (limit = 1000): Promise<{ total: number; items: any[] }> => fetchApi(`/all?limit=${limit}`),
   // Win95 Site
   getWinStats: (): Promise<WinStats> => fetchApi('/win-stats'),
+  getWinChats: (limit = 100): Promise<WinChatsResponse> => fetchApi(`/win-chats?limit=${limit}`),
 };
