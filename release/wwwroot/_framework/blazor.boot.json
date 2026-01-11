@@ -1,7 +1,7 @@
 {
   "entryAssembly": "Term2",
   "resources": {
-    "hash": "sha256-D9VmETl0JKV4BXUZxEvtJvvkkZB8GgMdmE9F7Xig2k8=",
+    "hash": "sha256-ee3biVB8x0DN8gPhPvSoOYbpkkS3TSGT1VLJkM6OY1s=",
     "runtime": {
       "dotnet.js": "sha256-pu7MO47B6So4jcW6iY2UI11lBZYz2EQnJKiYNsOpNJg=",
       "dotnet.timezones.blat": "sha256-vrFYQt55a4tGoDGoyRfjjGa1nSecx646RK78iTzPWCM=",
@@ -65,7 +65,7 @@
       "System.dll": "sha256-/CoLM+0eZmBCLWHyE5EaG/XonczpuGmu7BxChElWHqE=",
       "netstandard.dll": "sha256-am8NCr+MlCfSdr9YNhDluckv9YcT8eGnzQ7yGOE+bUg=",
       "System.Private.CoreLib.dll": "sha256-4CpLmw/ca+IRJsLtUdfJGz0PEwQwuOhW8/4Z1X+87YQ=",
-      "Term2.dll": "sha256-Qjm51uGB3vH0ZnmFFWbYtFnqvBL3REH1bYqkEeaA6IU="
+      "Term2.dll": "sha256-DBAMNewfUvjA/9fwmQE4jc9PFpqZXZlZYSoGqtfLDbg="
     },
     "runtimeAssets": {
       "dotnet.wasm": {
