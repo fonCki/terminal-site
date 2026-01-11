@@ -139,7 +139,9 @@ exports.handler = async (event) => {
         const queryParams = event.queryStringParameters || {};
 
         // Route based on path
-        if (path.includes('/stats')) {
+        if (path.includes('/win-stats')) {
+            return await getWinStats();
+        } else if (path.includes('/stats')) {
             return await getStats();
         } else if (path.includes('/visitor-activity')) {
             // Get all activity for a specific IP
@@ -540,6 +542,128 @@ async function getVisitors() {
         body: JSON.stringify({
             totalVisitors: visitorsWithGeo.length,
             visitors: visitorsWithGeo
+        })
+    };
+}
+
+// Win95 Site Analytics
+async function getWinStats() {
+    // Scan all items with win- prefix
+    const result = await docClient.send(new ScanCommand({
+        TableName: TABLE_NAME,
+        FilterExpression: 'begins_with(#type, :prefix)',
+        ExpressionAttributeNames: { '#type': 'type' },
+        ExpressionAttributeValues: { ':prefix': 'win-' }
+    }));
+
+    const items = result.Items || [];
+
+    // Categorize events
+    const visits = items.filter(i => i.type === 'win-visit');
+    const clicks = items.filter(i => i.type === 'win-click');
+    const windows = items.filter(i => i.type === 'win-window');
+    const chats = items.filter(i => i.type === 'win-chat');
+    const cvEvents = items.filter(i => i.type === 'win-cv');
+    const sessions = items.filter(i => i.type === 'win-session');
+
+    // Unique IPs
+    const uniqueIPs = new Set(items.map(i => i.ip).filter(ip => ip && ip !== 'unknown' && ip !== ''));
+
+    // Click frequency by element
+    const clickFreq = {};
+    clicks.forEach(c => {
+        const element = c.element || 'unknown';
+        const action = c.action || '';
+        const key = action ? `${element}:${action}` : element;
+        clickFreq[key] = (clickFreq[key] || 0) + 1;
+    });
+
+    const topClicks = Object.entries(clickFreq)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10)
+        .map(([name, count]) => ({ name, count }));
+
+    // Window actions
+    const windowActions = {};
+    windows.forEach(w => {
+        const action = w.action || 'unknown';
+        const app = w.appName || 'unknown';
+        const key = `${app}:${action}`;
+        windowActions[key] = (windowActions[key] || 0) + 1;
+    });
+
+    const topWindows = Object.entries(windowActions)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10)
+        .map(([name, count]) => ({ name, count }));
+
+    // CV Funnel
+    const cvOpened = cvEvents.filter(e => e.action === 'opened').length;
+    const cvLoaded = cvEvents.filter(e => e.action === 'loaded').length;
+    const cvPageChanges = cvEvents.filter(e => e.action === 'page-change').length;
+    const cvDownloaded = cvEvents.filter(e => e.action === 'downloaded').length;
+
+    // Chat sessions
+    const chatSessions = new Set(chats.map(c => c.sessionId).filter(Boolean));
+
+    // Session durations
+    const sessionDurations = sessions
+        .filter(s => s.duration)
+        .map(s => s.duration);
+    const avgDuration = sessionDurations.length > 0
+        ? Math.round(sessionDurations.reduce((a, b) => a + b, 0) / sessionDurations.length)
+        : 0;
+
+    // Activity by hour
+    const hourlyActivity = {};
+    items.forEach(i => {
+        if (i.timestamp) {
+            const hour = new Date(i.timestamp).getHours();
+            hourlyActivity[hour] = (hourlyActivity[hour] || 0) + 1;
+        }
+    });
+
+    // Activity by day
+    const dailyActivity = {};
+    items.forEach(i => {
+        if (i.timestamp) {
+            const day = i.timestamp.split('T')[0];
+            dailyActivity[day] = (dailyActivity[day] || 0) + 1;
+        }
+    });
+
+    const dailyData = Object.entries(dailyActivity)
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([date, count]) => ({ date, count }));
+
+    return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+            overview: {
+                totalEvents: items.length,
+                totalVisits: visits.length,
+                totalClicks: clicks.length,
+                totalWindows: windows.length,
+                totalChats: chats.length,
+                totalCVViews: cvEvents.length,
+                totalSessions: sessions.length,
+                uniqueVisitors: uniqueIPs.size,
+                chatSessions: chatSessions.size,
+                avgSessionDuration: avgDuration
+            },
+            topClicks,
+            topWindows,
+            cvFunnel: {
+                opened: cvOpened,
+                loaded: cvLoaded,
+                pageChanges: cvPageChanges,
+                downloaded: cvDownloaded
+            },
+            hourlyActivity: Object.entries(hourlyActivity)
+                .map(([hour, count]) => ({ hour: parseInt(hour), count }))
+                .sort((a, b) => a.hour - b.hour),
+            dailyActivity: dailyData
         })
     };
 }

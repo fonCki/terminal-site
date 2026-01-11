@@ -953,3 +953,32 @@ footer .last-updated {
     min-height: 400px;
   }
 }
+
+/* Win95 Funnel Styles */
+.funnel-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+}
+
+.funnel-step {
+  width: 100%;
+}
+
+.funnel-bar {
+  height: 40px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  min-width: 100px;
+  transition: width 0.3s ease;
+}
+
+.funnel-label {
+  color: var(--bg-dark);
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}

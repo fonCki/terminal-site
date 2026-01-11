@@ -173,6 +173,32 @@ export interface VisitorActivityResponse {
   sessions: VisitorSession[];
 }
 
+// Win95 Site Types
+export interface WinStats {
+  overview: {
+    totalEvents: number;
+    totalVisits: number;
+    totalClicks: number;
+    totalWindows: number;
+    totalChats: number;
+    totalCVViews: number;
+    totalSessions: number;
+    uniqueVisitors: number;
+    chatSessions: number;
+    avgSessionDuration: number;
+  };
+  topClicks: { name: string; count: number }[];
+  topWindows: { name: string; count: number }[];
+  cvFunnel: {
+    opened: number;
+    loaded: number;
+    pageChanges: number;
+    downloaded: number;
+  };
+  hourlyActivity: { hour: number; count: number }[];
+  dailyActivity: { date: string; count: number }[];
+}
+
 export const api = {
   getStats: (): Promise<Stats> => fetchApi('/stats'),
   getChats: (limit = 100): Promise<ChatsResponse> => fetchApi(`/chats?limit=${limit}`),
@@ -181,4 +207,6 @@ export const api = {
   getVisitors: (): Promise<VisitorsResponse> => fetchApi('/visitors'),
   getVisitorActivity: (ip: string): Promise<VisitorActivityResponse> => fetchApi(`/visitor-activity?ip=${encodeURIComponent(ip)}`),
   getAll: (limit = 1000): Promise<{ total: number; items: any[] }> => fetchApi(`/all?limit=${limit}`),
+  // Win95 Site
+  getWinStats: (): Promise<WinStats> => fetchApi('/win-stats'),
 };
