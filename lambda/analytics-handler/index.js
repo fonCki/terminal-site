@@ -54,23 +54,25 @@ async function getGeoLocation(ip) {
     }
     if (geoCache[ip]) return geoCache[ip];
 
+    // Use ip-api.com (45 requests/minute free, no API key)
     return new Promise((resolve) => {
-        https.get(`https://ipapi.co/${ip}/json/`, (res) => {
+        const http = require('http');
+        http.get(`http://ip-api.com/json/${ip}`, (res) => {
             let data = '';
             res.on('data', chunk => data += chunk);
             res.on('end', () => {
                 try {
                     const geo = JSON.parse(data);
                     console.log('Geo API response for', ip, ':', JSON.stringify(geo));
-                    if (geo.error || geo.reason) {
-                        console.log('Geo API error:', geo.error || geo.reason);
+                    if (geo.status === 'fail') {
+                        console.log('Geo API error:', geo.message);
                         resolve(null);
                     } else {
                         const result = {
-                            country: geo.country_name || 'Unknown',
-                            countryCode: geo.country_code || '',
+                            country: geo.country || 'Unknown',
+                            countryCode: geo.countryCode || '',
                             city: geo.city || '',
-                            region: geo.region || ''
+                            region: geo.regionName || ''
                         };
                         geoCache[ip] = result;
                         resolve(result);
