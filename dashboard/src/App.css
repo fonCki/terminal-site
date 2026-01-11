@@ -982,3 +982,30 @@ footer .last-updated {
   font-size: 0.9rem;
   white-space: nowrap;
 }
+
+/* Win95 Chats Session Location */
+.session-location {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: var(--fg-dim);
+  margin-top: 2px;
+}
+
+.session-location .unknown {
+  font-style: italic;
+}
+
+.session-info {
+  font-size: 0.85rem;
+  color: var(--fg-dim);
+  margin-bottom: 12px;
+  padding: 8px;
+  background: var(--bg-light);
+  border-radius: 4px;
+}
+
+.session-details {
+  margin-bottom: 8px;
+}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api, getAuthToken, clearAuth } from './api';
-import type { Stats, ChatsResponse, VisitorsResponse, VisitorActivityResponse, WinStats } from './api';
+import type { Stats, ChatsResponse, VisitorsResponse, VisitorActivityResponse, WinStats, WinChatsResponse } from './api';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import { Users, MessageSquare, Terminal, Activity, Clock, Globe, RefreshCw, MapPin, LogOut, Monitor, MousePointer, FileText } from 'lucide-react';
 import { Login } from './Login';
@@ -16,9 +16,11 @@ function App() {
   const [visitors, setVisitors] = useState<VisitorsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'visitors' | 'chats' | 'commands' | 'win95'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'visitors' | 'chats' | 'commands' | 'win95' | 'win95chats'>('overview');
   const [winStats, setWinStats] = useState<WinStats | null>(null);
+  const [winChats, setWinChats] = useState<WinChatsResponse | null>(null);
   const [selectedSession, setSelectedSession] = useState<string | null>(null);
+  const [selectedWinSession, setSelectedWinSession] = useState<string | null>(null);
   const [selectedVisitor, setSelectedVisitor] = useState<string | null>(null);
   const [visitorActivity, setVisitorActivity] = useState<VisitorActivityResponse | null>(null);
   const [loadingActivity, setLoadingActivity] = useState(false);
@@ -35,16 +37,18 @@ function App() {
     setLoading(true);
     setError(null);
     try {
-      const [statsData, chatsData, visitorsData, winStatsData] = await Promise.all([
+      const [statsData, chatsData, visitorsData, winStatsData, winChatsData] = await Promise.all([
         api.getStats(),
         api.getChats(500),
         api.getVisitors(),
         api.getWinStats(),
+        api.getWinChats(500),
       ]);
       setStats(statsData);
       setChats(chatsData);
       setVisitors(visitorsData);
       setWinStats(winStatsData);
+      setWinChats(winChatsData);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load data';
       if (message === 'Session expired' || message === 'Not authenticated') {
@@ -149,6 +153,10 @@ function App() {
         <button className={activeTab === 'win95' ? 'active' : ''} onClick={() => setActiveTab('win95')}>
           <Monitor size={14} style={{ marginRight: '4px' }} />
           Win95 Site
+        </button>
+        <button className={activeTab === 'win95chats' ? 'active' : ''} onClick={() => setActiveTab('win95chats')}>
+          <MessageSquare size={14} style={{ marginRight: '4px' }} />
+          Win95 Chats
         </button>
       </nav>
 
@@ -626,6 +634,79 @@ function App() {
               </div>
             </section>
           </>
+        )}
+
+        {activeTab === 'win95chats' && winChats && (
+          <section className="chats-section">
+            <div className="sessions-list">
+              <h3>Win95 Chat Sessions ({winChats.sessions.length})</h3>
+              {winChats.sessions.map((session) => (
+                <div
+                  key={session.sessionId}
+                  className={`session-item ${selectedWinSession === session.sessionId ? 'active' : ''}`}
+                  onClick={() => setSelectedWinSession(session.sessionId)}
+                >
+                  <div className="session-header">
+                    <span className="session-ip">{session.ip}</span>
+                    <span className="session-count">{session.messages.length} msgs</span>
+                  </div>
+                  <div className="session-location">
+                    {session.location ? (
+                      <>
+                        <MapPin size={12} />
+                        <span>{session.location.city ? `${session.location.city}, ` : ''}{session.location.country}</span>
+                      </>
+                    ) : (
+                      <span className="unknown">Unknown location</span>
+                    )}
+                  </div>
+                  <div className="session-time">{new Date(session.startTime).toLocaleString()}</div>
+                </div>
+              ))}
+            </div>
+            <div className="chat-viewer">
+              {selectedWinSession ? (
+                <>
+                  <h3>Conversation</h3>
+                  {(() => {
+                    const session = winChats.sessions.find(s => s.sessionId === selectedWinSession);
+                    return session && (
+                      <div className="session-details">
+                        <p className="session-info">
+                          <strong>IP:</strong> {session.ip}
+                          {session.location && (
+                            <> | <MapPin size={12} style={{ verticalAlign: 'middle' }} /> {session.location.city ? `${session.location.city}, ` : ''}{session.location.country}</>
+                          )}
+                        </p>
+                      </div>
+                    );
+                  })()}
+                  <div className="messages">
+                    {winChats.sessions
+                      .find(s => s.sessionId === selectedWinSession)
+                      ?.messages.map((msg, idx) => (
+                        <div key={idx} className="message-pair">
+                          <div className="user-message">
+                            <span className="label">User:</span>
+                            <p>{msg.userMessage}</p>
+                            <span className="time">{new Date(msg.timestamp).toLocaleTimeString()}</span>
+                          </div>
+                          <div className="bot-message">
+                            <span className="label">Alfonso:</span>
+                            <p>{msg.botResponse}</p>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </>
+              ) : (
+                <div className="no-selection">
+                  <MessageSquare size={48} />
+                  <p>Select a session to view the conversation</p>
+                </div>
+              )}
+            </div>
+          </section>
         )}
       </main>
 
