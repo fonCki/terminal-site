@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { api, getAuthToken, clearAuth } from './api';
-import type { Stats, ChatsResponse, VisitorsResponse, VisitorActivityResponse } from './api';
+import type { Stats, ChatsResponse, VisitorsResponse, VisitorActivityResponse, WinStats } from './api';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { Users, MessageSquare, Terminal, Activity, Clock, Globe, RefreshCw, MapPin, LogOut } from 'lucide-react';
+import { Users, MessageSquare, Terminal, Activity, Clock, Globe, RefreshCw, MapPin, LogOut, Monitor, MousePointer, FileText } from 'lucide-react';
 import { Login } from './Login';
 import './App.css';
 
@@ -16,7 +16,8 @@ function App() {
   const [visitors, setVisitors] = useState<VisitorsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'visitors' | 'chats' | 'commands'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'visitors' | 'chats' | 'commands' | 'win95'>('overview');
+  const [winStats, setWinStats] = useState<WinStats | null>(null);
   const [selectedSession, setSelectedSession] = useState<string | null>(null);
   const [selectedVisitor, setSelectedVisitor] = useState<string | null>(null);
   const [visitorActivity, setVisitorActivity] = useState<VisitorActivityResponse | null>(null);
@@ -34,14 +35,16 @@ function App() {
     setLoading(true);
     setError(null);
     try {
-      const [statsData, chatsData, visitorsData] = await Promise.all([
+      const [statsData, chatsData, visitorsData, winStatsData] = await Promise.all([
         api.getStats(),
         api.getChats(500),
         api.getVisitors(),
+        api.getWinStats(),
       ]);
       setStats(statsData);
       setChats(chatsData);
       setVisitors(visitorsData);
+      setWinStats(winStatsData);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load data';
       if (message === 'Session expired' || message === 'Not authenticated') {
@@ -142,6 +145,10 @@ function App() {
         </button>
         <button className={activeTab === 'commands' ? 'active' : ''} onClick={() => setActiveTab('commands')}>
           Commands
+        </button>
+        <button className={activeTab === 'win95' ? 'active' : ''} onClick={() => setActiveTab('win95')}>
+          <Monitor size={14} style={{ marginRight: '4px' }} />
+          Win95 Site
         </button>
       </nav>
 
@@ -449,6 +456,176 @@ function App() {
               </table>
             </div>
           </section>
+        )}
+
+        {activeTab === 'win95' && winStats && (
+          <>
+            <section className="stats-grid">
+              <div className="stat-card">
+                <div className="stat-icon"><Activity size={24} /></div>
+                <div className="stat-content">
+                  <span className="stat-value">{winStats.overview.totalEvents}</span>
+                  <span className="stat-label">Total Events</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-icon"><Globe size={24} /></div>
+                <div className="stat-content">
+                  <span className="stat-value">{winStats.overview.totalVisits}</span>
+                  <span className="stat-label">Page Visits</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-icon"><MousePointer size={24} /></div>
+                <div className="stat-content">
+                  <span className="stat-value">{winStats.overview.totalClicks}</span>
+                  <span className="stat-label">Clicks</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-icon"><Monitor size={24} /></div>
+                <div className="stat-content">
+                  <span className="stat-value">{winStats.overview.totalWindows}</span>
+                  <span className="stat-label">Window Actions</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-icon"><MessageSquare size={24} /></div>
+                <div className="stat-content">
+                  <span className="stat-value">{winStats.overview.totalChats}</span>
+                  <span className="stat-label">Chat Messages</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-icon"><FileText size={24} /></div>
+                <div className="stat-content">
+                  <span className="stat-value">{winStats.overview.totalCVViews}</span>
+                  <span className="stat-label">CV Views</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-icon"><Users size={24} /></div>
+                <div className="stat-content">
+                  <span className="stat-value">{winStats.overview.uniqueVisitors}</span>
+                  <span className="stat-label">Unique Visitors</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-icon"><Clock size={24} /></div>
+                <div className="stat-content">
+                  <span className="stat-value">{Math.round(winStats.overview.avgSessionDuration / 60)}m</span>
+                  <span className="stat-label">Avg Session</span>
+                </div>
+              </div>
+            </section>
+
+            <section className="charts-grid">
+              <div className="chart-card">
+                <h3>Most Clicked Elements</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={winStats.topClicks} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke="#3c3836" />
+                    <XAxis type="number" stroke="#a89984" />
+                    <YAxis dataKey="name" type="category" stroke="#a89984" width={120} tick={{ fontSize: 12 }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#1d2021', border: '1px solid #3c3836' }} labelStyle={{ color: '#ebdbb2' }} />
+                    <Bar dataKey="count" fill="#458588" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="chart-card">
+                <h3>Most Opened Windows</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={winStats.topWindows} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke="#3c3836" />
+                    <XAxis type="number" stroke="#a89984" />
+                    <YAxis dataKey="name" type="category" stroke="#a89984" width={120} tick={{ fontSize: 12 }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#1d2021', border: '1px solid #3c3836' }} labelStyle={{ color: '#ebdbb2' }} />
+                    <Bar dataKey="count" fill="#b16286" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="chart-card">
+                <h3>CV View Funnel</h3>
+                <div className="funnel-container">
+                  <div className="funnel-step">
+                    <div className="funnel-bar" style={{ width: '100%', backgroundColor: '#98971a' }}>
+                      <span className="funnel-label">Opened: {winStats.cvFunnel.opened}</span>
+                    </div>
+                  </div>
+                  <div className="funnel-step">
+                    <div className="funnel-bar" style={{ width: `${winStats.cvFunnel.opened > 0 ? (winStats.cvFunnel.loaded / winStats.cvFunnel.opened) * 100 : 0}%`, backgroundColor: '#458588' }}>
+                      <span className="funnel-label">Loaded: {winStats.cvFunnel.loaded}</span>
+                    </div>
+                  </div>
+                  <div className="funnel-step">
+                    <div className="funnel-bar" style={{ width: `${winStats.cvFunnel.opened > 0 ? (winStats.cvFunnel.pageChanges / winStats.cvFunnel.opened) * 100 : 0}%`, backgroundColor: '#b16286' }}>
+                      <span className="funnel-label">Page Changes: {winStats.cvFunnel.pageChanges}</span>
+                    </div>
+                  </div>
+                  <div className="funnel-step">
+                    <div className="funnel-bar" style={{ width: `${winStats.cvFunnel.opened > 0 ? (winStats.cvFunnel.downloaded / winStats.cvFunnel.opened) * 100 : 0}%`, backgroundColor: '#d79921' }}>
+                      <span className="funnel-label">Downloaded: {winStats.cvFunnel.downloaded}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="chart-card">
+                <h3>Hourly Activity</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={winStats.hourlyActivity}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#3c3836" />
+                    <XAxis dataKey="hour" stroke="#a89984" tickFormatter={(h) => `${h}:00`} />
+                    <YAxis stroke="#a89984" />
+                    <Tooltip contentStyle={{ backgroundColor: '#1d2021', border: '1px solid #3c3836' }} labelFormatter={(h) => `${h}:00`} />
+                    <Line type="monotone" dataKey="count" stroke="#689d6a" strokeWidth={2} dot={{ fill: '#689d6a' }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="chart-card full-width">
+                <h3>Daily Activity</h3>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={winStats.dailyActivity}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#3c3836" />
+                    <XAxis dataKey="date" stroke="#a89984" />
+                    <YAxis stroke="#a89984" />
+                    <Tooltip contentStyle={{ backgroundColor: '#1d2021', border: '1px solid #3c3836' }} />
+                    <Bar dataKey="count" fill="#d65d0e" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="chart-card">
+                <h3>Event Distribution</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: 'Visits', value: winStats.overview.totalVisits },
+                        { name: 'Clicks', value: winStats.overview.totalClicks },
+                        { name: 'Windows', value: winStats.overview.totalWindows },
+                        { name: 'Chats', value: winStats.overview.totalChats },
+                        { name: 'CV Views', value: winStats.overview.totalCVViews },
+                      ]}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      dataKey="value"
+                      label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
+                    >
+                      {COLORS.map((color, index) => (
+                        <Cell key={`cell-${index}`} fill={color} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ backgroundColor: '#1d2021', border: '1px solid #3c3836' }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </section>
+          </>
         )}
       </main>
 

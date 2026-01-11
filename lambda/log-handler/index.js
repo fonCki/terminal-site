@@ -10,8 +10,13 @@ const TABLE_NAME = process.env.DYNAMODB_TABLE || 'terminal-site-logs';
 const ALLOWED_ORIGINS = [
     'https://alfonso.ridao.ar',
     'https://term.ridao.ar',
+    'https://win.ridao.ar',
     'https://feature-chat-analytics.dmscxbysbp31y.amplifyapp.com',
     'http://localhost:5182',
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:5175',
+    'http://localhost:5176',
     'http://localhost:5000'
 ];
 
@@ -69,8 +74,11 @@ exports.handler = async (event) => {
         const body = JSON.parse(event.body);
         const { type, ip, ...data } = body;
 
-        // Validate log type
-        const validTypes = ['visit', 'command', 'chat'];
+        // Validate log type (terminal-site and win-site events)
+        const validTypes = [
+            'visit', 'command', 'chat',  // terminal-site
+            'win-visit', 'win-click', 'win-window', 'win-chat', 'win-cv', 'win-session'  // win-site
+        ];
         if (!type || !validTypes.includes(type)) {
             return {
                 statusCode: 400,

@@ -5,7 +5,7 @@ namespace Term2.Services;
 public class Commands {
 
     //SET THE COMMANDS
-    private string[]? commandArray = new[] {"","about", "banner", "chat", "clear", "date", "email", "github", "help", "instagram", "linkedin", "repo","whoami"};
+    private string[]? commandArray = new[] {"","about", "banner", "chat", "clear", "date", "email", "github", "help", "instagram", "linkedin", "repo", "win", "whoami"};
     
     public readonly List<Command?>? _commandList = new List<Command?>();
 
@@ -37,6 +37,7 @@ public class Commands {
         _commandList.Find(c => c!.Name.Equals("instagram"))!.Link = "https://www.instagram.com/alfonsoridao/";
         _commandList.Find(c => c!.Name.Equals("linkedin"))!.Link = "https://www.linkedin.com/in/alfonsoridao";
         _commandList.Find(c => c!.Name.Equals("repo"))!.Link = "https://github.com/fonCki/Term2";
+        _commandList.Find(c => c!.Name.Equals("win"))!.Link = "https://win.ridao.ar";
 
     }
 
@@ -50,7 +51,8 @@ public class Commands {
                 "<p># This project is my own version of term. based on <i>@m4tt72</i>'s version. </p>" +
                 "<p># Type 'repo' to find out the repository. </p>" +
                 "<p># Made with Blazor </p>" +
-                "<p style='color: #458588;'># New! Type 'chat' to talk with my digital twin </p>");
+                "<p style='color: #458588;'># New! Type 'chat' to talk with my digital twin </p>" +
+                "<p style='color: #cc241d;'># Type 'win' if you prefer a GUI </p>");
     }
     
 
