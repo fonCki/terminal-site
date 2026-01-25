@@ -8,7 +8,24 @@
     <meta name="google-site-verification" content="2kjKsKASjAkyWGoQZ2jLdzg4M9aNmgKp6V5LGp9RNNw" />
     <meta name="description" content="Explore the digital domain of Alfonso Ridao, where software engineering meets boundless creativity. Dive into a world shaped by innovative projects and a journey through time and technology.">
     <meta name="robots" content="index, follow">
-    <title>alfonso.ridao</title>
+    <meta name="author" content="Alfonso Ridao">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://alfonso.ridao.ar/">
+    <meta property="og:title" content="Alfonso Ridao - Software Engineer Portfolio">
+    <meta property="og:description" content="Interactive terminal-style portfolio. Explore projects in .NET, cloud computing, and web development.">
+    <meta property="og:site_name" content="alfonso.ridao">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Alfonso Ridao - Software Engineer Portfolio">
+    <meta name="twitter:description" content="Interactive terminal-style portfolio. Explore projects in .NET, cloud computing, and web development.">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://alfonso.ridao.ar/">
+
+    <title>Alfonso Ridao - Software Engineer Portfolio</title>
     <base href="/" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hack-font@3/build/web/hack-subset.css">
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
@@ -16,7 +33,40 @@
 </head>
 
 <body>
-<div id="app">Loading...</div>
+<div id="app">
+    <!-- SEO fallback content - replaced by Blazor on load -->
+    <noscript>
+        <article style="font-family: monospace; padding: 20px; max-width: 800px; margin: 0 auto;">
+            <h1>Alfonso Ridao - Software Engineer</h1>
+            <p>Welcome to my interactive terminal portfolio. Enable JavaScript to experience the full terminal interface.</p>
+            <h2>About Me</h2>
+            <p>Software engineer passionate about building innovative solutions with .NET, cloud computing, and modern web technologies.</p>
+            <h2>Quick Links</h2>
+            <ul>
+                <li><a href="https://github.com/alfonsoridao">GitHub Profile</a></li>
+                <li><a href="https://linkedin.com/in/alfonsoridao">LinkedIn</a></li>
+            </ul>
+            <h2>Available Commands</h2>
+            <p>Try these commands in the terminal: help, about, github, linkedin, email, whoami</p>
+        </article>
+    </noscript>
+    <!-- Schema.org structured data for search engines -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Alfonso Ridao",
+        "url": "https://alfonso.ridao.ar",
+        "jobTitle": "Software Engineer",
+        "description": "Software engineer passionate about building innovative solutions with .NET, cloud computing, and modern web technologies.",
+        "sameAs": [
+            "https://github.com/alfonsoridao",
+            "https://linkedin.com/in/alfonsoridao"
+        ]
+    }
+    </script>
+    Loading...
+</div>
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.
