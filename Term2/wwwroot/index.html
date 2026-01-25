@@ -43,8 +43,10 @@
             <p>Software engineer passionate about building innovative solutions with .NET, cloud computing, and modern web technologies.</p>
             <h2>Quick Links</h2>
             <ul>
-                <li><a href="https://github.com/alfonsoridao">GitHub Profile</a></li>
-                <li><a href="https://linkedin.com/in/alfonsoridao">LinkedIn</a></li>
+                <li><a href="https://github.com/fonCki">GitHub Projects</a> - Source code and open source projects</li>
+                <li><a href="https://linkedin.com/in/alfonsoridao">LinkedIn Profile</a> - Professional network</li>
+                <li><a href="https://win.ridao.ar">Windows 95 Portfolio</a> - Retro version of this site</li>
+                <li><a href="https://instagram.com/alfonsordao">Instagram</a> - Personal photos</li>
             </ul>
             <h2>Available Commands</h2>
             <p>Try these commands in the terminal: help, about, github, linkedin, email, whoami</p>
@@ -54,14 +56,53 @@
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Alfonso Ridao",
-        "url": "https://alfonso.ridao.ar",
-        "jobTitle": "Software Engineer",
-        "description": "Software engineer passionate about building innovative solutions with .NET, cloud computing, and modern web technologies.",
-        "sameAs": [
-            "https://github.com/alfonsoridao",
-            "https://linkedin.com/in/alfonsoridao"
+        "@graph": [
+            {
+                "@type": "WebSite",
+                "@id": "https://alfonso.ridao.ar/#website",
+                "url": "https://alfonso.ridao.ar",
+                "name": "Alfonso Ridao - Software Engineer Portfolio",
+                "description": "Interactive terminal-style portfolio showcasing software engineering projects",
+                "publisher": {"@id": "https://alfonso.ridao.ar/#person"}
+            },
+            {
+                "@type": "Person",
+                "@id": "https://alfonso.ridao.ar/#person",
+                "name": "Alfonso Ridao",
+                "url": "https://alfonso.ridao.ar",
+                "jobTitle": "Software Engineer",
+                "description": "Software engineer passionate about building innovative solutions with .NET, cloud computing, and modern web technologies.",
+                "sameAs": [
+                    "https://github.com/fonCki",
+                    "https://linkedin.com/in/alfonsoridao",
+                    "https://instagram.com/alfonsordao",
+                    "https://win.ridao.ar"
+                ]
+            },
+            {
+                "@type": "SiteNavigationElement",
+                "name": "GitHub Projects",
+                "description": "View source code and open source projects",
+                "url": "https://github.com/fonCki"
+            },
+            {
+                "@type": "SiteNavigationElement",
+                "name": "LinkedIn Profile",
+                "description": "Professional network and work experience",
+                "url": "https://linkedin.com/in/alfonsoridao"
+            },
+            {
+                "@type": "SiteNavigationElement",
+                "name": "Windows 95 Portfolio",
+                "description": "Retro Windows 95 style version of the portfolio",
+                "url": "https://win.ridao.ar"
+            },
+            {
+                "@type": "SiteNavigationElement",
+                "name": "Instagram",
+                "description": "Personal photos and stories",
+                "url": "https://instagram.com/alfonsordao"
+            }
         ]
     }
     </script>
