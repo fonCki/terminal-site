@@ -1,54 +1,58 @@
-import { useState, useEffect } from 'react';
-import { api, getAuthToken, clearAuth } from './api';
-import type { Stats, ChatsResponse, VisitorsResponse, VisitorActivityResponse, WinStats, WinChatsResponse } from './api';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { Users, MessageSquare, Terminal, Activity, Clock, Globe, RefreshCw, MapPin, LogOut, Monitor, MousePointer, FileText } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Activity, BarChart3, BookOpen, EyeOff, LogOut, MessageSquare, RefreshCw, Terminal, Users } from 'lucide-react';
+import { api, clearAuth, getAuthToken, type DashboardResponse } from './api';
+import { buildChatThreads, buildFeed, buildStats, buildVisitors, relative } from './model';
 import { Login } from './Login';
+import { ActivityView, ChatsView, GuestbookView, StatsView, VisitorsView, type Common } from './views';
 import './App.css';
 
-function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    // Check if we have a valid token
-    return sessionStorage.getItem('analytics_authenticated') === 'true' && !!getAuthToken();
-  });
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [chats, setChats] = useState<ChatsResponse | null>(null);
-  const [visitors, setVisitors] = useState<VisitorsResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'visitors' | 'chats' | 'commands' | 'win95' | 'win95chats'>('overview');
-  const [winStats, setWinStats] = useState<WinStats | null>(null);
-  const [winChats, setWinChats] = useState<WinChatsResponse | null>(null);
-  const [selectedSession, setSelectedSession] = useState<string | null>(null);
-  const [selectedWinSession, setSelectedWinSession] = useState<string | null>(null);
-  const [selectedVisitor, setSelectedVisitor] = useState<string | null>(null);
-  const [visitorActivity, setVisitorActivity] = useState<VisitorActivityResponse | null>(null);
-  const [loadingActivity, setLoadingActivity] = useState(false);
+type Tab = 'activity' | 'visitors' | 'chats' | 'guestbook' | 'stats';
 
-  const handleLogout = () => {
+const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
+  { id: 'activity', label: 'Activity', icon: <Activity size={14} /> },
+  { id: 'visitors', label: 'Visitors', icon: <Users size={14} /> },
+  { id: 'chats', label: 'Chats', icon: <MessageSquare size={14} /> },
+  { id: 'guestbook', label: 'Guestbook', icon: <BookOpen size={14} /> },
+  { id: 'stats', label: 'Stats', icon: <BarChart3 size={14} /> },
+];
+
+const REFRESH_MS = 60_000;
+const MY_IPS_KEY = 'analytics_my_ips';
+const HIDE_ME_KEY = 'analytics_hide_me';
+
+function loadMyIps(): Set<string> {
+  try {
+    return new Set<string>(JSON.parse(localStorage.getItem(MY_IPS_KEY) ?? '[]'));
+  } catch {
+    return new Set();
+  }
+}
+
+function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(() => sessionStorage.getItem('analytics_authenticated') === 'true' && !!getAuthToken());
+  const [data, setData] = useState<DashboardResponse | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [fetchedAt, setFetchedAt] = useState<number>(0);
+  const [tab, setTab] = useState<Tab>('activity');
+  const [selectedIp, setSelectedIp] = useState<string | null>(null);
+  const [myIps, setMyIps] = useState<Set<string>>(loadMyIps);
+  const [hideMe, setHideMe] = useState<boolean>(() => localStorage.getItem(HIDE_ME_KEY) === 'true');
+  const [, setTick] = useState(0);
+
+  const handleLogout = useCallback(() => {
     clearAuth();
     setIsAuthenticated(false);
-    setStats(null);
-    setChats(null);
-    setVisitors(null);
-  };
+    setData(null);
+  }, []);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const [statsData, chatsData, visitorsData, winStatsData, winChatsData] = await Promise.all([
-        api.getStats(),
-        api.getChats(500),
-        api.getVisitors(),
-        api.getWinStats(),
-        api.getWinChats(500),
-      ]);
-      setStats(statsData);
-      setChats(chatsData);
-      setVisitors(visitorsData);
-      setWinStats(winStatsData);
-      setWinChats(winChatsData);
+      const d = await api.getDashboard();
+      setData(d);
+      setFetchedAt(Date.now());
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load data';
       if (message === 'Session expired' || message === 'Not authenticated') {
@@ -59,660 +63,112 @@ function App() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [handleLogout]);
 
-  const handleSelectVisitor = async (ip: string) => {
-    if (selectedVisitor === ip) {
-      // Deselect if clicking the same visitor
-      setSelectedVisitor(null);
-      setVisitorActivity(null);
-      return;
-    }
-
-    setSelectedVisitor(ip);
-    setLoadingActivity(true);
-    try {
-      const activity = await api.getVisitorActivity(ip);
-      setVisitorActivity(activity);
-    } catch (err) {
-      console.error('Failed to load visitor activity:', err);
-      setVisitorActivity(null);
-    } finally {
-      setLoadingActivity(false);
-    }
-  };
-
-  // useEffect MUST be called before any conditional returns (Rules of Hooks)
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchData();
-      const interval = setInterval(fetchData, 30000);
-      return () => clearInterval(interval);
-    }
-  }, [isAuthenticated]);
+    if (!isAuthenticated) return;
+    fetchData();
+    const interval = setInterval(fetchData, REFRESH_MS);
+    const ticker = setInterval(() => setTick(t => t + 1), 30_000); // re-render relative times
+    return () => { clearInterval(interval); clearInterval(ticker); };
+  }, [isAuthenticated, fetchData]);
 
-  // Show login if not authenticated
+  const toggleMe = useCallback((ip: string) => {
+    setMyIps(prev => {
+      const next = new Set(prev);
+      if (next.has(ip)) next.delete(ip); else next.add(ip);
+      localStorage.setItem(MY_IPS_KEY, JSON.stringify([...next]));
+      return next;
+    });
+  }, []);
+
+  const toggleHideMe = () => {
+    setHideMe(h => { localStorage.setItem(HIDE_ME_KEY, String(!h)); return !h; });
+  };
+
+  // Derived model. Everything is computed in the browser from one payload.
+  const model = useMemo(() => {
+    if (!data) return null;
+    const allFeed = buildFeed(data);
+    const allVisitors = buildVisitors(allFeed, data.geo);
+    const feed = hideMe ? allFeed.filter(e => !myIps.has(e.ip)) : allFeed;
+    const visitors = hideMe ? allVisitors.filter(v => !myIps.has(v.ip)) : allVisitors;
+    const visitorsByIp = new Map(allVisitors.map(v => [v.ip, v]));
+    return {
+      feed,
+      visitors,
+      visitorsByIp,
+      threads: buildChatThreads(visitors),
+      stats: buildStats(feed, visitors),
+    };
+  }, [data, hideMe, myIps]);
+
+  const selectIp = useCallback((ip: string) => {
+    setSelectedIp(ip);
+    setTab('visitors');
+  }, []);
+
   if (!isAuthenticated) {
     return <Login onLogin={() => setIsAuthenticated(true)} />;
   }
 
-  const COLORS = ['#98971a', '#458588', '#b16286', '#d79921', '#cc241d', '#689d6a', '#d65d0e', '#83a598'];
-
-  if (loading && !stats) {
-    return (
-      <div className="app loading">
-        <div className="loader">Loading analytics...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="app error">
-        <div className="error-message">
-          <h2>Error loading data</h2>
-          <p>{error}</p>
-          <button onClick={fetchData}>Retry</button>
-        </div>
-      </div>
-    );
-  }
+  const common: Common | null = model && data ? { geo: data.geo, visitorsByIp: model.visitorsByIp, myIps, onSelectIp: selectIp } : null;
+  const lastEvent = model?.feed[0];
 
   return (
     <div className="app">
       <header>
         <div className="header-left">
-          <Terminal size={24} />
-          <h1>alfonso.ridao.ar Analytics</h1>
+          <Terminal size={20} />
+          <h1>ridao.ar analytics</h1>
+          <span className="dim small header-status">
+            {data && lastEvent && <>last event {relative(lastEvent.time)} · </>}
+            {fetchedAt ? `refreshed ${relative(fetchedAt)}` : ''}
+          </span>
         </div>
         <div className="header-right">
-          <button onClick={fetchData} className="refresh-btn" disabled={loading}>
-            <RefreshCw size={16} className={loading ? 'spinning' : ''} />
-            Refresh
+          <label className={`check ${hideMe ? 'on' : ''}`} title="Hide traffic from the IPs you marked as yourself">
+            <EyeOff size={14} /> <input type="checkbox" checked={hideMe} onChange={toggleHideMe} /> hide my traffic{myIps.size ? ` (${myIps.size} IP${myIps.size > 1 ? 's' : ''})` : ''}
+          </label>
+          <button onClick={fetchData} className="btn" disabled={loading}>
+            <RefreshCw size={14} className={loading ? 'spinning' : ''} /> Refresh
           </button>
-          <button onClick={handleLogout} className="logout-btn">
-            <LogOut size={16} />
-            Logout
-          </button>
+          <button onClick={handleLogout} className="btn"><LogOut size={14} /> Logout</button>
         </div>
       </header>
 
       <nav className="tabs">
-        <button className={activeTab === 'overview' ? 'active' : ''} onClick={() => setActiveTab('overview')}>
-          Overview
-        </button>
-        <button className={activeTab === 'visitors' ? 'active' : ''} onClick={() => setActiveTab('visitors')}>
-          Visitors
-        </button>
-        <button className={activeTab === 'chats' ? 'active' : ''} onClick={() => setActiveTab('chats')}>
-          Chat Sessions
-        </button>
-        <button className={activeTab === 'commands' ? 'active' : ''} onClick={() => setActiveTab('commands')}>
-          Commands
-        </button>
-        <button className={activeTab === 'win95' ? 'active' : ''} onClick={() => setActiveTab('win95')}>
-          <Monitor size={14} style={{ marginRight: '4px' }} />
-          Win95 Site
-        </button>
-        <button className={activeTab === 'win95chats' ? 'active' : ''} onClick={() => setActiveTab('win95chats')}>
-          <MessageSquare size={14} style={{ marginRight: '4px' }} />
-          Win95 Chats
-        </button>
+        {TABS.map(t => (
+          <button key={t.id} className={tab === t.id ? 'active' : ''} onClick={() => setTab(t.id)}>
+            {t.icon} {t.label}
+            {model && t.id === 'chats' && <span className="pill">{model.threads.length}</span>}
+            {model && t.id === 'visitors' && <span className="pill">{model.visitors.length}</span>}
+            {data && t.id === 'guestbook' && <span className="pill">{data.guestbook.entries.filter(e => !e.seed).length}</span>}
+          </button>
+        ))}
       </nav>
 
       <main>
-        {activeTab === 'overview' && stats && (
+        {error && (
+          <div className="error-box">
+            <p>Could not load data: {error}</p>
+            <button className="btn" onClick={fetchData}>Retry</button>
+          </div>
+        )}
+        {!data && !error && <div className="loader">Loading everything from both sites…</div>}
+        {model && data && common && (
           <>
-            <section className="stats-grid">
-              <div className="stat-card">
-                <div className="stat-icon"><Activity size={24} /></div>
-                <div className="stat-content">
-                  <span className="stat-value">{stats.overview.totalEvents}</span>
-                  <span className="stat-label">Total Events</span>
-                </div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-icon"><Users size={24} /></div>
-                <div className="stat-content">
-                  <span className="stat-value">{stats.overview.uniqueVisitors}</span>
-                  <span className="stat-label">Unique Visitors</span>
-                </div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-icon"><Terminal size={24} /></div>
-                <div className="stat-content">
-                  <span className="stat-value">{stats.overview.totalCommands}</span>
-                  <span className="stat-label">Commands</span>
-                </div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-icon"><MessageSquare size={24} /></div>
-                <div className="stat-content">
-                  <span className="stat-value">{stats.overview.totalChats}</span>
-                  <span className="stat-label">Chat Messages</span>
-                </div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-icon"><Clock size={24} /></div>
-                <div className="stat-content">
-                  <span className="stat-value">{stats.overview.chatSessions}</span>
-                  <span className="stat-label">Chat Sessions</span>
-                </div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-icon"><Globe size={24} /></div>
-                <div className="stat-content">
-                  <span className="stat-value">{stats.overview.totalVisits}</span>
-                  <span className="stat-label">Page Visits</span>
-                </div>
-              </div>
-            </section>
-
-            <section className="charts-grid">
-              <div className="chart-card">
-                <h3>Top Commands</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={stats.topCommands} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" stroke="#3c3836" />
-                    <XAxis type="number" stroke="#a89984" />
-                    <YAxis dataKey="name" type="category" stroke="#a89984" width={120} tick={{ fontSize: 12 }} />
-                    <Tooltip contentStyle={{ backgroundColor: '#1d2021', border: '1px solid #3c3836' }} labelStyle={{ color: '#ebdbb2' }} />
-                    <Bar dataKey="count" fill="#98971a" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-
-              <div className="chart-card">
-                <h3>Hourly Activity</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={stats.hourlyActivity}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#3c3836" />
-                    <XAxis dataKey="hour" stroke="#a89984" tickFormatter={(h) => `${h}:00`} />
-                    <YAxis stroke="#a89984" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1d2021', border: '1px solid #3c3836' }} labelFormatter={(h) => `${h}:00`} />
-                    <Line type="monotone" dataKey="count" stroke="#458588" strokeWidth={2} dot={{ fill: '#458588' }} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-
-              <div className="chart-card full-width">
-                <h3>Daily Activity</h3>
-                <ResponsiveContainer width="100%" height={200}>
-                  <BarChart data={stats.dailyActivity}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#3c3836" />
-                    <XAxis dataKey="date" stroke="#a89984" />
-                    <YAxis stroke="#a89984" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1d2021', border: '1px solid #3c3836' }} />
-                    <Bar dataKey="count" fill="#b16286" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-
-              <div className="chart-card">
-                <h3>Event Distribution</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={[
-                        { name: 'Visits', value: stats.overview.totalVisits },
-                        { name: 'Commands', value: stats.overview.totalCommands },
-                        { name: 'Chats', value: stats.overview.totalChats },
-                      ]}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={100}
-                      dataKey="value"
-                      label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
-                    >
-                      {COLORS.map((color, index) => (
-                        <Cell key={`cell-${index}`} fill={color} />
-                      ))}
-                    </Pie>
-                    <Tooltip contentStyle={{ backgroundColor: '#1d2021', border: '1px solid #3c3836' }} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </section>
+            {tab === 'activity' && <ActivityView feed={model.feed} common={common} />}
+            {tab === 'visitors' && <VisitorsView visitors={model.visitors} selectedIp={selectedIp} common={common} toggleMe={toggleMe} />}
+            {tab === 'chats' && <ChatsView threads={model.threads} selectedIp={selectedIp} common={common} onSelect={setSelectedIp} />}
+            {tab === 'guestbook' && <GuestbookView entries={data.guestbook.entries} visitorCount={data.guestbook.visitorCount} error={data.guestbook.error} common={common} />}
+            {tab === 'stats' && <StatsView stats={model.stats} feedCount={model.feed.length} generatedAt={data.generatedAt} />}
           </>
-        )}
-
-        {activeTab === 'visitors' && visitors && (
-          <section className="visitors-section-split">
-            <div className="visitors-list">
-              <h3>Visitors ({visitors.totalVisitors})</h3>
-              <div className="visitors-table">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>IP Address</th>
-                      <th>Location</th>
-                      <th>Last Seen</th>
-                      <th>Events</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {visitors.visitors.map((visitor) => (
-                      <tr
-                        key={visitor.ip}
-                        className={selectedVisitor === visitor.ip ? 'selected' : ''}
-                        onClick={() => handleSelectVisitor(visitor.ip)}
-                      >
-                        <td className="ip">{visitor.ip}</td>
-                        <td className="location">
-                          {visitor.location ? (
-                            <>
-                              <MapPin size={14} />
-                              <span>{visitor.location.city ? `${visitor.location.city}, ` : ''}{visitor.location.country}</span>
-                            </>
-                          ) : (
-                            <span className="unknown">Unknown</span>
-                          )}
-                        </td>
-                        <td className="time">{new Date(visitor.lastSeen).toLocaleString()}</td>
-                        <td className="count">{visitor.totalEvents}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div className="visitor-activity">
-              {loadingActivity ? (
-                <div className="loading-activity">Loading activity...</div>
-              ) : selectedVisitor && visitorActivity ? (
-                <>
-                  <h3>Activity Timeline - {visitorActivity.ip}</h3>
-                  {visitorActivity.location && (
-                    <p className="visitor-location">
-                      <MapPin size={14} />
-                      {visitorActivity.location.city && `${visitorActivity.location.city}, `}
-                      {visitorActivity.location.country}
-                    </p>
-                  )}
-                  <p className="visitor-stats">
-                    {visitorActivity.totalEvents} events in {visitorActivity.totalSessions} session(s)
-                  </p>
-                  <div className="sessions-timeline">
-                    {visitorActivity.sessions.map((session, sessionIdx) => (
-                      <div key={sessionIdx} className="session-block">
-                        <div className="session-header-timeline">
-                          <span className="session-date">{new Date(session.startTime).toLocaleDateString()}</span>
-                          <span className="session-time-range">
-                            {new Date(session.startTime).toLocaleTimeString()} - {new Date(session.endTime).toLocaleTimeString()}
-                          </span>
-                          <span className="session-summary">
-                            {session.visits > 0 && `${session.visits} visit${session.visits > 1 ? 's' : ''}`}
-                            {session.commands > 0 && ` · ${session.commands} cmd${session.commands > 1 ? 's' : ''}`}
-                            {session.chats > 0 && ` · ${session.chats} chat${session.chats > 1 ? 's' : ''}`}
-                          </span>
-                        </div>
-                        <div className="events-list">
-                          {session.events.map((event, eventIdx) => (
-                            <div key={eventIdx} className={`event-item event-${event.type}`}>
-                              <span className="event-time">{new Date(event.timestamp).toLocaleTimeString()}</span>
-                              <span className={`event-type ${event.type}`}>{event.type}</span>
-                              <span className="event-content">
-                                {event.type === 'visit' && 'Page visit'}
-                                {event.type === 'command' && event.command}
-                                {event.type === 'chat' && (
-                                  <span className="chat-preview">
-                                    <strong>Q:</strong> {event.userMessage?.substring(0, 50)}{event.userMessage && event.userMessage.length > 50 ? '...' : ''}
-                                  </span>
-                                )}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <div className="no-selection">
-                  <Users size={48} />
-                  <p>Select a visitor to see their activity</p>
-                </div>
-              )}
-            </div>
-          </section>
-        )}
-
-        {activeTab === 'chats' && chats && (
-          <section className="chats-section">
-            <div className="sessions-list">
-              <h3>Chat Sessions ({chats.sessions.length})</h3>
-              {chats.sessions.map((session) => (
-                <div
-                  key={session.sessionId}
-                  className={`session-item ${selectedSession === session.sessionId ? 'active' : ''}`}
-                  onClick={() => setSelectedSession(session.sessionId)}
-                >
-                  <div className="session-header">
-                    <span className="session-ip">{session.ip}</span>
-                    <span className="session-count">{session.messages.length} msgs</span>
-                  </div>
-                  <div className="session-time">{new Date(session.startTime).toLocaleString()}</div>
-                </div>
-              ))}
-            </div>
-            <div className="chat-viewer">
-              {selectedSession ? (
-                <>
-                  <h3>Conversation</h3>
-                  <div className="messages">
-                    {chats.sessions
-                      .find(s => s.sessionId === selectedSession)
-                      ?.messages.map((msg, idx) => (
-                        <div key={idx} className="message-pair">
-                          <div className="user-message">
-                            <span className="label">User:</span>
-                            <p>{msg.userMessage}</p>
-                            <span className="time">{new Date(msg.timestamp).toLocaleTimeString()}</span>
-                          </div>
-                          <div className="bot-message">
-                            <span className="label">Alfonso:</span>
-                            <p>{msg.botResponse}</p>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </>
-              ) : (
-                <div className="no-selection">
-                  <MessageSquare size={48} />
-                  <p>Select a session to view the conversation</p>
-                </div>
-              )}
-            </div>
-          </section>
-        )}
-
-        {activeTab === 'commands' && stats && (
-          <section className="commands-section">
-            <h3>Command Usage Statistics</h3>
-            <div className="commands-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Rank</th>
-                    <th>Command</th>
-                    <th>Count</th>
-                    <th>Percentage</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {stats.topCommands.map((cmd, idx) => (
-                    <tr key={cmd.name}>
-                      <td className="rank">#{idx + 1}</td>
-                      <td className="command">{cmd.name}</td>
-                      <td className="count">{cmd.count}</td>
-                      <td className="percentage">
-                        <div className="bar-container">
-                          <div
-                            className="bar"
-                            style={{
-                              width: `${(cmd.count / stats.topCommands[0].count) * 100}%`,
-                              backgroundColor: COLORS[idx % COLORS.length]
-                            }}
-                          />
-                          <span>{((cmd.count / stats.overview.totalCommands) * 100).toFixed(1)}%</span>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        )}
-
-        {activeTab === 'win95' && winStats && (
-          <>
-            <section className="stats-grid">
-              <div className="stat-card">
-                <div className="stat-icon"><Activity size={24} /></div>
-                <div className="stat-content">
-                  <span className="stat-value">{winStats.overview.totalEvents}</span>
-                  <span className="stat-label">Total Events</span>
-                </div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-icon"><Globe size={24} /></div>
-                <div className="stat-content">
-                  <span className="stat-value">{winStats.overview.totalVisits}</span>
-                  <span className="stat-label">Page Visits</span>
-                </div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-icon"><MousePointer size={24} /></div>
-                <div className="stat-content">
-                  <span className="stat-value">{winStats.overview.totalClicks}</span>
-                  <span className="stat-label">Clicks</span>
-                </div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-icon"><Monitor size={24} /></div>
-                <div className="stat-content">
-                  <span className="stat-value">{winStats.overview.totalWindows}</span>
-                  <span className="stat-label">Window Actions</span>
-                </div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-icon"><MessageSquare size={24} /></div>
-                <div className="stat-content">
-                  <span className="stat-value">{winStats.overview.totalChats}</span>
-                  <span className="stat-label">Chat Messages</span>
-                </div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-icon"><FileText size={24} /></div>
-                <div className="stat-content">
-                  <span className="stat-value">{winStats.overview.totalCVViews}</span>
-                  <span className="stat-label">CV Views</span>
-                </div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-icon"><Users size={24} /></div>
-                <div className="stat-content">
-                  <span className="stat-value">{winStats.overview.uniqueVisitors}</span>
-                  <span className="stat-label">Unique Visitors</span>
-                </div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-icon"><Clock size={24} /></div>
-                <div className="stat-content">
-                  <span className="stat-value">{Math.round(winStats.overview.avgSessionDuration / 60)}m</span>
-                  <span className="stat-label">Avg Session</span>
-                </div>
-              </div>
-            </section>
-
-            <section className="charts-grid">
-              <div className="chart-card">
-                <h3>Most Clicked Elements</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={winStats.topClicks} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" stroke="#3c3836" />
-                    <XAxis type="number" stroke="#a89984" />
-                    <YAxis dataKey="name" type="category" stroke="#a89984" width={120} tick={{ fontSize: 12 }} />
-                    <Tooltip contentStyle={{ backgroundColor: '#1d2021', border: '1px solid #3c3836' }} labelStyle={{ color: '#ebdbb2' }} />
-                    <Bar dataKey="count" fill="#458588" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-
-              <div className="chart-card">
-                <h3>Most Opened Windows</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={winStats.topWindows} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" stroke="#3c3836" />
-                    <XAxis type="number" stroke="#a89984" />
-                    <YAxis dataKey="name" type="category" stroke="#a89984" width={120} tick={{ fontSize: 12 }} />
-                    <Tooltip contentStyle={{ backgroundColor: '#1d2021', border: '1px solid #3c3836' }} labelStyle={{ color: '#ebdbb2' }} />
-                    <Bar dataKey="count" fill="#b16286" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-
-              <div className="chart-card">
-                <h3>CV View Funnel</h3>
-                <div className="funnel-container">
-                  <div className="funnel-step">
-                    <div className="funnel-bar" style={{ width: '100%', backgroundColor: '#98971a' }}>
-                      <span className="funnel-label">Opened: {winStats.cvFunnel.opened}</span>
-                    </div>
-                  </div>
-                  <div className="funnel-step">
-                    <div className="funnel-bar" style={{ width: `${winStats.cvFunnel.opened > 0 ? (winStats.cvFunnel.loaded / winStats.cvFunnel.opened) * 100 : 0}%`, backgroundColor: '#458588' }}>
-                      <span className="funnel-label">Loaded: {winStats.cvFunnel.loaded}</span>
-                    </div>
-                  </div>
-                  <div className="funnel-step">
-                    <div className="funnel-bar" style={{ width: `${winStats.cvFunnel.opened > 0 ? (winStats.cvFunnel.pageChanges / winStats.cvFunnel.opened) * 100 : 0}%`, backgroundColor: '#b16286' }}>
-                      <span className="funnel-label">Page Changes: {winStats.cvFunnel.pageChanges}</span>
-                    </div>
-                  </div>
-                  <div className="funnel-step">
-                    <div className="funnel-bar" style={{ width: `${winStats.cvFunnel.opened > 0 ? (winStats.cvFunnel.downloaded / winStats.cvFunnel.opened) * 100 : 0}%`, backgroundColor: '#d79921' }}>
-                      <span className="funnel-label">Downloaded: {winStats.cvFunnel.downloaded}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="chart-card">
-                <h3>Hourly Activity</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={winStats.hourlyActivity}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#3c3836" />
-                    <XAxis dataKey="hour" stroke="#a89984" tickFormatter={(h) => `${h}:00`} />
-                    <YAxis stroke="#a89984" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1d2021', border: '1px solid #3c3836' }} labelFormatter={(h) => `${h}:00`} />
-                    <Line type="monotone" dataKey="count" stroke="#689d6a" strokeWidth={2} dot={{ fill: '#689d6a' }} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-
-              <div className="chart-card full-width">
-                <h3>Daily Activity</h3>
-                <ResponsiveContainer width="100%" height={200}>
-                  <BarChart data={winStats.dailyActivity}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#3c3836" />
-                    <XAxis dataKey="date" stroke="#a89984" />
-                    <YAxis stroke="#a89984" />
-                    <Tooltip contentStyle={{ backgroundColor: '#1d2021', border: '1px solid #3c3836' }} />
-                    <Bar dataKey="count" fill="#d65d0e" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-
-              <div className="chart-card">
-                <h3>Event Distribution</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={[
-                        { name: 'Visits', value: winStats.overview.totalVisits },
-                        { name: 'Clicks', value: winStats.overview.totalClicks },
-                        { name: 'Windows', value: winStats.overview.totalWindows },
-                        { name: 'Chats', value: winStats.overview.totalChats },
-                        { name: 'CV Views', value: winStats.overview.totalCVViews },
-                      ]}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={100}
-                      dataKey="value"
-                      label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
-                    >
-                      {COLORS.map((color, index) => (
-                        <Cell key={`cell-${index}`} fill={color} />
-                      ))}
-                    </Pie>
-                    <Tooltip contentStyle={{ backgroundColor: '#1d2021', border: '1px solid #3c3836' }} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </section>
-          </>
-        )}
-
-        {activeTab === 'win95chats' && winChats && (
-          <section className="chats-section">
-            <div className="sessions-list">
-              <h3>Win95 Chat Sessions ({winChats.sessions.length})</h3>
-              {winChats.sessions.map((session) => (
-                <div
-                  key={session.sessionId}
-                  className={`session-item ${selectedWinSession === session.sessionId ? 'active' : ''}`}
-                  onClick={() => setSelectedWinSession(session.sessionId)}
-                >
-                  <div className="session-header">
-                    <span className="session-ip">{session.ip}</span>
-                    <span className="session-count">{session.messages.length} msgs</span>
-                  </div>
-                  <div className="session-location">
-                    {session.location ? (
-                      <>
-                        <MapPin size={12} />
-                        <span>{session.location.city ? `${session.location.city}, ` : ''}{session.location.country}</span>
-                      </>
-                    ) : (
-                      <span className="unknown">Unknown location</span>
-                    )}
-                  </div>
-                  <div className="session-time">{new Date(session.startTime).toLocaleString()}</div>
-                </div>
-              ))}
-            </div>
-            <div className="chat-viewer">
-              {selectedWinSession ? (
-                <>
-                  <h3>Conversation</h3>
-                  {(() => {
-                    const session = winChats.sessions.find(s => s.sessionId === selectedWinSession);
-                    return session && (
-                      <div className="session-details">
-                        <p className="session-info">
-                          <strong>IP:</strong> {session.ip}
-                          {session.location && (
-                            <> | <MapPin size={12} style={{ verticalAlign: 'middle' }} /> {session.location.city ? `${session.location.city}, ` : ''}{session.location.country}</>
-                          )}
-                        </p>
-                      </div>
-                    );
-                  })()}
-                  <div className="messages">
-                    {winChats.sessions
-                      .find(s => s.sessionId === selectedWinSession)
-                      ?.messages.map((msg, idx) => (
-                        <div key={idx} className="message-pair">
-                          <div className="user-message">
-                            <span className="label">User:</span>
-                            <p>{msg.userMessage}</p>
-                            <span className="time">{new Date(msg.timestamp).toLocaleTimeString()}</span>
-                          </div>
-                          <div className="bot-message">
-                            <span className="label">Alfonso:</span>
-                            <p>{msg.botResponse}</p>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </>
-              ) : (
-                <div className="no-selection">
-                  <MessageSquare size={48} />
-                  <p>Select a session to view the conversation</p>
-                </div>
-              )}
-            </div>
-          </section>
         )}
       </main>
 
       <footer>
-        <p>Terminal Site Analytics Dashboard - Built for alfonso.ridao.ar</p>
-        <p className="last-updated">Last updated: {new Date().toLocaleString()}</p>
+        <span className="dim small">alfonso.ridao.ar + win.ridao.ar · auto-refreshes every minute · times shown in your local timezone</span>
       </footer>
     </div>
   );

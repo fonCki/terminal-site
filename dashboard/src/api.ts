@@ -1,6 +1,9 @@
 const API_BASE = 'https://7sv2xijrq7.execute-api.eu-west-2.amazonaws.com/api';
 
+// ---------------------------------------------------------------------------
 // Token management
+// ---------------------------------------------------------------------------
+
 let authToken: string | null = null;
 
 export function setAuthToken(token: string | null) {
@@ -25,14 +28,11 @@ export function clearAuth() {
   sessionStorage.removeItem('analytics_authenticated');
 }
 
-// Login API
 export async function login(password: string): Promise<{ success: boolean; error?: string }> {
   try {
     const response = await fetch(`${API_BASE}/auth/login`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password }),
     });
 
@@ -45,23 +45,19 @@ export async function login(password: string): Promise<{ success: boolean; error
     setAuthToken(data.token);
     sessionStorage.setItem('analytics_authenticated', 'true');
     return { success: true };
-  } catch (error) {
+  } catch {
     return { success: false, error: 'Connection failed' };
   }
 }
 
-// Authenticated API fetch
 async function fetchApi(endpoint: string) {
   const token = getAuthToken();
-
   if (!token) {
     throw new Error('Not authenticated');
   }
 
   const response = await fetch(`${API_BASE}/analytics${endpoint}`, {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
 
   if (response.status === 401) {
@@ -76,152 +72,78 @@ async function fetchApi(endpoint: string) {
   return response.json();
 }
 
-export interface Stats {
-  overview: {
-    totalEvents: number;
-    totalVisits: number;
-    totalCommands: number;
-    totalChats: number;
-    uniqueVisitors: number;
-    chatSessions: number;
-  };
-  topCommands: { name: string; count: number }[];
-  hourlyActivity: { hour: number; count: number }[];
-  dailyActivity: { date: string; count: number }[];
-}
+// ---------------------------------------------------------------------------
+// Types returned by GET /analytics/dashboard
+// ---------------------------------------------------------------------------
 
-export interface ChatMessage {
-  userMessage: string;
-  botResponse: string;
-  timestamp: string;
-}
+export type Site = 'terminal' | 'win95';
 
-export interface ChatSession {
-  sessionId: string;
+export type EventType =
+  | 'visit' | 'command' | 'chat'
+  | 'win-visit' | 'win-click' | 'win-window' | 'win-chat' | 'win-cv' | 'win-session';
+
+export interface RawEvent {
+  id: string;
+  ts: string;
   ip: string;
-  startTime: string;
-  endTime: string;
-  messages: ChatMessage[];
-}
-
-export interface ChatsResponse {
-  totalChats: number;
-  sessions: ChatSession[];
-}
-
-export interface WinChatSession {
-  sessionId: string;
-  ip: string;
-  startTime: string;
-  endTime: string;
-  messages: ChatMessage[];
-  location: GeoLocation | null;
-}
-
-export interface WinChatsResponse {
-  totalChats: number;
-  sessions: WinChatSession[];
-}
-
-export interface Command {
-  command: string;
-  ip: string;
-  timestamp: string;
-}
-
-export interface Visit {
-  ip: string;
-  timestamp: string;
+  site: Site;
+  type: EventType;
+  sessionId?: string;
+  // visit / win-visit
   userAgent?: string;
-  location?: string;
+  referrer?: string;
+  screenWidth?: number;
+  screenHeight?: number;
+  // command
+  command?: string;
+  // chat / win-chat
+  userMessage?: string;
+  botResponse?: string;
+  // win-click
+  element?: string;
+  target?: string;
+  // win-window / win-cv
+  appName?: string;
+  action?: string;
+  pageNumber?: number;
+  // win-session
+  durationMs?: number;
 }
 
-export interface GeoLocation {
+export interface Geo {
   country: string;
   countryCode: string;
   city: string;
   region: string;
+  isp: string;
+  org: string;
+  as: string;
+  proxy: boolean;
+  hosting: boolean;
 }
 
-export interface Visitor {
+export interface GuestbookEntry {
+  id: string;
+  name: string;
+  message: string;
+  ts: string;
   ip: string;
-  firstSeen: string;
-  lastSeen: string;
-  totalEvents: number;
-  visits: number;
-  commands: number;
-  chats: number;
-  location: GeoLocation | null;
+  approved: boolean;
+  seed: boolean;
 }
 
-export interface VisitorsResponse {
-  totalVisitors: number;
-  visitors: Visitor[];
-}
-
-export interface ActivityEvent {
-  type: 'visit' | 'command' | 'chat';
-  timestamp: string;
-  command?: string;
-  userMessage?: string;
-  botResponse?: string;
-  sessionId?: string;
-  userAgent?: string;
-}
-
-export interface VisitorSession {
-  startTime: string;
-  endTime: string;
-  totalEvents: number;
-  visits: number;
-  commands: number;
-  chats: number;
-  events: ActivityEvent[];
-}
-
-export interface VisitorActivityResponse {
-  ip: string;
-  location: GeoLocation | null;
-  totalEvents: number;
-  totalSessions: number;
-  sessions: VisitorSession[];
-}
-
-// Win95 Site Types
-export interface WinStats {
-  overview: {
-    totalEvents: number;
-    totalVisits: number;
-    totalClicks: number;
-    totalWindows: number;
-    totalChats: number;
-    totalCVViews: number;
-    totalSessions: number;
-    uniqueVisitors: number;
-    chatSessions: number;
-    avgSessionDuration: number;
+export interface DashboardResponse {
+  generatedAt: string;
+  totalRawItems: number;
+  events: RawEvent[];
+  geo: Record<string, Geo>;
+  guestbook: {
+    visitorCount: number;
+    entries: GuestbookEntry[];
+    error?: string;
   };
-  topClicks: { name: string; count: number }[];
-  topWindows: { name: string; count: number }[];
-  cvFunnel: {
-    opened: number;
-    loaded: number;
-    pageChanges: number;
-    downloaded: number;
-  };
-  hourlyActivity: { hour: number; count: number }[];
-  dailyActivity: { date: string; count: number }[];
 }
 
 export const api = {
-  getStats: (): Promise<Stats> => fetchApi('/stats'),
-  getChats: (limit = 100): Promise<ChatsResponse> => fetchApi(`/chats?limit=${limit}`),
-  getCommands: (limit = 100): Promise<{ commands: Command[] }> => fetchApi(`/commands?limit=${limit}`),
-  getVisits: (limit = 100): Promise<{ visits: Visit[] }> => fetchApi(`/visits?limit=${limit}`),
-  getVisitors: (): Promise<VisitorsResponse> => fetchApi('/visitors'),
-  getVisitorActivity: (ip: string): Promise<VisitorActivityResponse> => fetchApi(`/visitor-activity?ip=${encodeURIComponent(ip)}`),
-  getAll: (limit = 1000): Promise<{ total: number; items: any[] }> => fetchApi(`/all?limit=${limit}`),
-  // Win95 Site
-  getWinStats: (): Promise<WinStats> => fetchApi('/win-stats'),
-  getWinChats: (limit = 100): Promise<WinChatsResponse> => fetchApi(`/win-chats?limit=${limit}`),
+  getDashboard: (): Promise<DashboardResponse> => fetchApi('/dashboard'),
 };

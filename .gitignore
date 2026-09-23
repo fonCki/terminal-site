@@ -32,3 +32,6 @@ lambda/*/node_modules/
 dist/
 build/
 *.zip
+
+# Playwright MCP screenshots
+.playwright-mcp/
